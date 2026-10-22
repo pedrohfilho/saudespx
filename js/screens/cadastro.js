@@ -4,14 +4,8 @@ SPX.screens = SPX.screens || {};
 
 SPX.screens.cadastro = (function () {
   const { esc } = SPX.util;
+  const { opcoes } = SPX.ui;
   const NOVO_LIDER = '__novo__';
-
-  function opcoes(valores, selecionado, textoVazio) {
-    const vazio = '<option value="">' + esc(textoVazio) + '</option>';
-    return vazio + valores.map(v =>
-      '<option value="' + esc(v) + '"' + (v === selecionado ? ' selected' : '') + '>' + esc(v) + '</option>'
-    ).join('');
-  }
 
   function opcoesLider(lideres, selecionado) {
     const itens = lideres.map(l =>

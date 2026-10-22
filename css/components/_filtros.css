@@ -1,0 +1,28 @@
+.filtros {
+  margin-top: 12px;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+}
+
+.filtros > summary {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 14px;
+  color: var(--destaque);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.filtros[open] > summary { border-bottom: 1px solid var(--borda); }
+
+.filtros-corpo { padding: 0 14px 14px; }
+
+.filtros-grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0 12px;
+}
+
+.filtros-corpo .botao { margin-top: 14px; }

@@ -7,6 +7,7 @@ Substitui uma planilha de emergência por uma tela de busca rápida, pensada par
 ## Funcionalidades
 
 - Busca de colaborador por nome, sem diferenciar acento ou maiúscula.
+- Filtros por turno, líder, tipo sanguíneo, alergia a remédio e comorbidade, sozinhos ou junto com o nome.
 - Ficha com tipo sanguíneo, alergia a remédio, comorbidades, turno, líder e contatos de emergência (com link para ligar).
 - Registro de atendimento: quem acompanhou, observação e data/hora, com histórico por colaborador.
 - Cadastro e edição de colaboradores, líderes e contatos.
@@ -63,13 +64,18 @@ npx serve .
 
 e abra o endereço que ele mostrar. Também funciona abrindo o `index.html` direto no navegador.
 
+## Dados de teste
+
+O app abre com 100 colaboradores fictícios (`js/seed/seed-100.js`), gerados sempre do mesmo jeito. O botão "Restaurar dados de teste", no aviso do topo, volta a esse conjunto. Os testes automáticos usam um conjunto mínimo de 5 pessoas (`js/seed/seed-minimo.js`).
+
 ## Testes
 
 ```
 node tests/local.test.js
+node tests/seed100.test.js
 ```
 
 ## Observações
 
 - O repositório é público: nenhum dado real, chave secreta ou senha deve ser colocado aqui.
-- Os nomes e telefones dos dados de teste são inventados.
+- Os nomes e telefones dos dados de teste são inventados (telefones com DDD 00).

@@ -7,3 +7,14 @@
   font-size: 0.9rem;
   text-align: center;
 }
+
+.aviso-botao {
+  padding: 8px 4px;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
