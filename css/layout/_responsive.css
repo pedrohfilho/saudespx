@@ -1,0 +1,11 @@
+/* Ajustes por tamanho de tela. O padrão é celular; aqui só o que cresce. */
+
+/* tablet */
+@media (min-width: 768px) {
+  :root { --gutter: 24px; }
+}
+
+/* notebook e monitor largo */
+@media (min-width: 1024px) {
+  :root { --largura-max: 880px; }
+}

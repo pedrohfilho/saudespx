@@ -1,0 +1,5 @@
+.conteudo {
+  max-width: var(--largura-max);
+  margin: 0 auto;
+  padding: var(--gutter);
+}

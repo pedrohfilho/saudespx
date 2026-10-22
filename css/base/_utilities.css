@@ -1,0 +1,2 @@
+/* Esconde sem sair do HTML (o atributo hidden perde para display do CSS). */
+.oculto { display: none !important; }

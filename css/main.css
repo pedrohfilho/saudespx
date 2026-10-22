@@ -1,0 +1,27 @@
+/* ═══════════════════════════════════════════════════════════
+   SAÚDESPX
+   Folha de estilo principal — importa todos os módulos.
+
+   Ordem de import importa (cascata):
+   1. base       → variáveis, reset, tipografia, utilitários
+   2. layout     → estruturas fixas (topo, área de conteúdo, responsivo)
+   3. components → peças reutilizáveis (status, botões, campos, cartões)
+   4. sections   → estilos de cada tela (login, busca, ficha, atendimento)
+   ═══════════════════════════════════════════════════════════ */
+
+/* 1. BASE */
+@import url("base/_variables.css");
+@import url("base/_reset.css");
+@import url("base/_typography.css");
+@import url("base/_utilities.css");
+
+/* 2. LAYOUT */
+@import url("layout/_topo.css");
+@import url("layout/_conteudo.css");
+@import url("layout/_responsive.css");
+
+/* 3. COMPONENTS */
+@import url("components/_status.css");
+
+/* 4. SECTIONS */
+/* entram junto com as telas, a partir da etapa 1 */

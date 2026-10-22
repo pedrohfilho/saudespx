@@ -1,0 +1,5 @@
+.topo {
+  background: var(--superficie);
+  border-bottom: 1px solid var(--borda);
+  padding: 12px var(--gutter);
+}

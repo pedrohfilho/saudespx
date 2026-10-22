@@ -1,0 +1,11 @@
+.status {
+  margin: 0;
+  padding: 12px 14px;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  color: var(--texto-suave);
+}
+
+.status.ok { color: var(--ok); }
+.status.erro { color: var(--erro); }
