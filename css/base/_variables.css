@@ -7,8 +7,13 @@
   --texto-suave: #555e70;
   --borda: #d9dde5;
   --destaque: #1f5fbf;
+  --destaque-suave: #e6eefb;
   --erro: #b3261e;
+  --erro-fundo: #fdecea;
   --ok: #1b6e3c;
+  --aviso-fundo: #fff4d6;
+  --aviso-borda: #e6cf8a;
+  --aviso-texto: #5c4300;
 
   /* medidas */
   --raio: 10px;

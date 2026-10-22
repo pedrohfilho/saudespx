@@ -3,3 +3,8 @@
 html { -webkit-text-size-adjust: 100%; }
 
 body { margin: 0; }
+
+:focus-visible {
+  outline: 2px solid var(--destaque);
+  outline-offset: 2px;
+}

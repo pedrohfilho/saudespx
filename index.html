@@ -8,16 +8,21 @@
 </head>
 <body>
   <header class="topo">
-    <h1>SaúdeSPX</h1>
+    <a class="topo-marca" href="#/">SaúdeSPX</a>
+    <nav class="topo-nav" aria-label="Principal">
+      <a href="#/" data-rota="busca">Buscar</a>
+    </nav>
   </header>
 
-  <main id="app" class="conteudo">
-    <p id="status" class="status">Iniciando…</p>
-  </main>
+  <p id="aviso-teste" class="aviso-teste oculto">Modo de teste: dados fictícios, guardados só neste navegador.</p>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-  <script src="js/config/supabase.js"></script>
-  <script src="js/data/cliente.js"></script>
+  <main id="app" class="conteudo"></main>
+
+  <script src="js/core/util.js"></script>
+  <script src="js/core/colaborador.js"></script>
+  <script src="js/data/local.js"></script>
+  <script src="js/ui/ui.js"></script>
+  <script src="js/screens/busca.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

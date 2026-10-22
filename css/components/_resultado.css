@@ -1,0 +1,29 @@
+.lista-resultados {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.resultado {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 56px;
+  padding: 12px 14px;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  color: var(--texto);
+  text-decoration: none;
+}
+
+.resultado:hover { border-color: var(--destaque); }
+
+.resultado-nome { font-weight: 600; }
+
+.resultado-info {
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+}

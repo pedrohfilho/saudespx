@@ -1,5 +1,36 @@
 .topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 12px;
   background: var(--superficie);
   border-bottom: 1px solid var(--borda);
-  padding: 12px var(--gutter);
+  padding: 10px var(--gutter);
+}
+
+.topo-marca {
+  color: var(--texto);
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.topo-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.topo-nav a {
+  padding: 8px 12px;
+  border-radius: var(--raio);
+  color: var(--texto-suave);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.topo-nav a[aria-current="page"] {
+  background: var(--destaque-suave);
+  color: var(--destaque);
 }
