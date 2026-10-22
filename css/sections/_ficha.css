@@ -1,0 +1,54 @@
+.voltar {
+  display: inline-block;
+  padding: 8px 0;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.ficha-topo { margin-top: 4px; }
+.ficha-topo .dica { margin-top: 2px; }
+
+.resumo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.resumo-item {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 14px;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+}
+
+.resumo-rotulo {
+  color: var(--texto-suave);
+  font-size: 0.85rem;
+}
+
+.resumo-valor {
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.contatos {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contato {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.contato-nome { font-weight: 600; }

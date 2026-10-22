@@ -4,7 +4,8 @@ window.SPX = window.SPX || {};
 (function () {
   // Cada rota: nome (para marcar o menu), padrão do endereço e a tela que abre.
   const ROTAS = [
-    { nome: 'busca', padrao: /^\/?$/, abrir: (raiz) => SPX.screens.busca(raiz) }
+    { nome: 'busca', padrao: /^\/?$/, abrir: (raiz) => SPX.screens.busca(raiz) },
+    { nome: 'busca', padrao: /^\/ficha\/(\d+)$/, abrir: (raiz, id) => SPX.screens.ficha(raiz, Number(id)) }
   ];
 
   function rotaAtual() {

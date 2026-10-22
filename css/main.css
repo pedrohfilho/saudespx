@@ -25,6 +25,9 @@
 @import url("components/_aviso.css");
 @import url("components/_campo.css");
 @import url("components/_resultado.css");
+@import url("components/_botao.css");
+@import url("components/_bloco.css");
 
 /* 4. SECTIONS */
 /* um arquivo por tela, quando a tela precisar de estilo próprio */
+@import url("sections/_ficha.css");

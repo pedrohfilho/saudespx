@@ -1,0 +1,27 @@
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 10px 16px;
+  border: 1px solid var(--destaque);
+  border-radius: var(--raio);
+  background: var(--destaque);
+  color: #ffffff;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.botao:hover { filter: brightness(0.94); }
+
+.botao-secundario {
+  background: var(--superficie);
+  color: var(--destaque);
+}
+
+.botao[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

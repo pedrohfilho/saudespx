@@ -1,0 +1,25 @@
+/* Caixa de conteúdo usada nas telas (ficha, formulários, histórico). */
+.bloco {
+  margin-top: 12px;
+  padding: 14px;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+}
+
+.bloco h3 { margin-bottom: 6px; }
+.bloco p { margin: 0; }
+
+/* Aviso de atenção (ex.: alergia). A borda é inteira, sem faixa lateral. */
+.alerta {
+  margin-top: 12px;
+  padding: 14px;
+  background: var(--erro-fundo);
+  border: 1px solid var(--erro);
+  border-radius: var(--raio);
+  color: var(--texto);
+}
+
+.alerta h3 { color: var(--erro); margin-bottom: 4px; }
+.alerta p { margin: 0; }
+.alerta-destaque { font-size: 1.25rem; font-weight: 700; }
