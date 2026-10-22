@@ -66,7 +66,7 @@ e abra o endereço que ele mostrar. Também funciona abrindo o `index.html` dire
 
 ## Dados de teste
 
-O app abre com 100 colaboradores fictícios (`js/seed/seed-100.js`), gerados sempre do mesmo jeito. O botão "Restaurar dados de teste", no aviso do topo, volta a esse conjunto. Os testes automáticos usam um conjunto mínimo de 5 pessoas (`js/seed/seed-minimo.js`).
+O app abre com 100 colaboradores fictícios (`js/seed/seed-100.js`), gerados sempre do mesmo jeito. O botão "Restaurar dados de teste", no rodapé, volta a esse conjunto. Os testes automáticos usam um conjunto mínimo de 5 pessoas (`js/seed/seed-minimo.js`).
 
 ## Testes
 

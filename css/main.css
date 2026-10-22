@@ -18,11 +18,11 @@
 /* 2. LAYOUT */
 @import url("layout/_topo.css");
 @import url("layout/_conteudo.css");
+@import url("layout/_rodape.css");
 @import url("layout/_responsive.css");
 
 /* 3. COMPONENTS */
 @import url("components/_status.css");
-@import url("components/_aviso.css");
 @import url("components/_campo.css");
 @import url("components/_resultado.css");
 @import url("components/_filtros.css");

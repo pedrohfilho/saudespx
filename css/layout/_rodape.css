@@ -1,0 +1,17 @@
+.rodape {
+  max-width: var(--largura-max);
+  margin: 0 auto;
+  padding: 8px var(--gutter) 24px;
+  text-align: center;
+}
+
+.rodape-botao {
+  padding: 10px 8px;
+  background: none;
+  border: 0;
+  color: var(--texto-suave);
+  font: inherit;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  cursor: pointer;
+}

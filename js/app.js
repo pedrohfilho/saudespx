@@ -36,8 +36,8 @@ window.SPX = window.SPX || {};
   }
 
   function iniciar() {
-    // O aviso de teste só aparece enquanto os dados forem os locais.
-    document.getElementById('aviso-teste').classList.toggle('oculto', SPX.data !== SPX.dataLocal);
+    // O botão de restaurar só aparece enquanto os dados forem os locais.
+    document.getElementById('rodape-teste').classList.toggle('oculto', SPX.data !== SPX.dataLocal);
     document.getElementById('restaurar-teste').addEventListener('click', function () {
       if (!confirm('Voltar aos dados de teste originais? O que foi cadastrado neste navegador será apagado.')) return;
       SPX.data.resetar().then(function () {
