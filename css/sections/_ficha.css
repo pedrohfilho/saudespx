@@ -8,6 +8,13 @@
 .ficha-topo { margin-top: 4px; }
 .ficha-topo .dica { margin-top: 2px; }
 
+.ficha-editar {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 6px 0;
+  font-weight: 600;
+}
+
 .resumo {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));

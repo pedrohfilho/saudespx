@@ -50,6 +50,7 @@ SPX.screens.ficha = (function () {
         '<header class="ficha-topo">' +
           '<h2>' + esc(colaborador.nome) + '</h2>' +
           '<p class="dica">' + esc(turno) + ' · ' + esc(nomeLider) + '</p>' +
+          '<a class="ficha-editar" href="#/editar/' + colaborador.id_colaborador + '">Editar dados</a>' +
         '</header>' +
         '<div class="resumo">' +
           '<div class="resumo-item">' +

@@ -32,3 +32,4 @@
 /* um arquivo por tela, quando a tela precisar de estilo próprio */
 @import url("sections/_ficha.css");
 @import url("sections/_atendimento.css");
+@import url("sections/_cadastro.css");
