@@ -4,13 +4,12 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 8px 12px;
-  background: var(--superficie);
-  border-bottom: 1px solid var(--borda);
+  background: var(--topo-fundo);
   padding: 10px var(--gutter);
 }
 
 .topo-marca {
-  color: var(--texto);
+  color: var(--topo-texto);
   font-size: 1.15rem;
   font-weight: 700;
   text-decoration: none;
@@ -25,12 +24,17 @@
 .topo-nav a {
   padding: 8px 12px;
   border-radius: var(--raio);
-  color: var(--texto-suave);
+  color: var(--topo-link);
   font-weight: 600;
   text-decoration: none;
 }
 
+.topo-nav a:hover { background: var(--topo-ativo); }
+
 .topo-nav a[aria-current="page"] {
-  background: var(--destaque-suave);
-  color: var(--destaque);
+  background: var(--topo-ativo);
+  color: var(--topo-texto);
 }
+
+/* Foco visível sobre o fundo escuro do topo */
+.topo :focus-visible { outline-color: var(--topo-texto); }

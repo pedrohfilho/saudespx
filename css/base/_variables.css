@@ -6,8 +6,12 @@
   --texto: #1d2330;
   --texto-suave: #555e70;
   --borda: #d9dde5;
-  --destaque: #1f5fbf;
-  --destaque-suave: #e6eefb;
+  --destaque: #17653a;
+  --destaque-suave: #e1f1e7;
+  --topo-fundo: #14532d;
+  --topo-texto: #ffffff;
+  --topo-link: #e8f1ea;
+  --topo-ativo: rgba(255, 255, 255, 0.18);
   --erro: #b3261e;
   --erro-fundo: #fdecea;
   --ok: #1b6e3c;
