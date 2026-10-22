@@ -1,36 +1,11 @@
 // Camada de dados LOCAL (fase de testes, sem Supabase).
-// Guarda tudo no localStorage do navegador, com dados FICTÍCIOS.
+// Guarda tudo no localStorage do navegador, com dados FICTÍCIOS (ver js/seed/).
 // Toda função devolve uma Promise, igual vai ser com o Supabase,
 // assim as telas não mudam quando trocarmos o lado dos dados.
 window.SPX = window.SPX || {};
 
 (function () {
-  const CHAVE = 'spx_local_v1';
-
-  // Dados de partida (inventados).
-  const SEED = {
-    lideres: [
-      { id_lider: 1, nome: 'Carla Mendes', turno: 'T1' },
-      { id_lider: 2, nome: 'Roberto Lima', turno: 'T2' }
-    ],
-    colaboradores: [
-      { id_colaborador: 1, nome: 'Ana Souza', turno: 'T1', tipo_sanguineo: 'O+', alergia_remedio: true, alergia_qual: 'Dipirona', comorbidades: 'Asma', id_lider: 1 },
-      { id_colaborador: 2, nome: 'José Antônio Reis', turno: 'T1', tipo_sanguineo: 'A-', alergia_remedio: false, alergia_qual: '', comorbidades: '', id_lider: 1 },
-      { id_colaborador: 3, nome: 'Marina Costa', turno: 'T2', tipo_sanguineo: 'B+', alergia_remedio: true, alergia_qual: 'Penicilina', comorbidades: 'Diabetes', id_lider: 2 },
-      { id_colaborador: 4, nome: 'Paulo Henrique Dias', turno: 'T2', tipo_sanguineo: 'AB+', alergia_remedio: false, alergia_qual: '', comorbidades: 'Hipertensão', id_lider: 2 },
-      { id_colaborador: 5, nome: 'Anabela Rocha', turno: 'T3', tipo_sanguineo: 'O-', alergia_remedio: false, alergia_qual: '', comorbidades: '', id_lider: null }
-    ],
-    contatos: [
-      { id_contato: 1, id_colaborador: 1, nome: 'Marcos Souza', telefone: '(71) 90000-0001' },
-      { id_contato: 2, id_colaborador: 1, nome: 'Lúcia Souza', telefone: '(71) 90000-0002' },
-      { id_contato: 3, id_colaborador: 2, nome: 'Clara Reis', telefone: '(71) 90000-0003' },
-      { id_contato: 4, id_colaborador: 3, nome: 'Paulo Costa', telefone: '(71) 90000-0004' },
-      { id_contato: 5, id_colaborador: 4, nome: 'Sônia Dias', telefone: '(71) 90000-0005' },
-      { id_contato: 6, id_colaborador: 5, nome: 'Rui Rocha', telefone: '(71) 90000-0006' }
-    ],
-    atendimentos: [],
-    consultas: []
-  };
+  const CHAVE = 'spx_local_v2';
 
   function clonar(obj) {
     return JSON.parse(JSON.stringify(obj));
@@ -41,7 +16,7 @@ window.SPX = window.SPX || {};
       const salvo = localStorage.getItem(CHAVE);
       if (salvo) return JSON.parse(salvo);
     } catch (e) { /* sem acesso ao armazenamento: usa os dados de partida */ }
-    return clonar(SEED);
+    return SPX.seed();
   }
 
   function salvar(db) {
@@ -71,6 +46,19 @@ window.SPX = window.SPX || {};
     return db.lideres.find(l => l.id_lider === idLider) || null;
   }
 
+  // Confere um colaborador contra os filtros já normalizados (todos precisam bater).
+  function passaFiltros(c, f) {
+    if (f.turno && c.turno !== f.turno) return false;
+    if (f.id_lider === 'sem' && c.id_lider != null) return false;
+    if (f.id_lider && f.id_lider !== 'sem' && String(c.id_lider) !== f.id_lider) return false;
+    if (f.tipo_sanguineo && c.tipo_sanguineo !== f.tipo_sanguineo) return false;
+    if (f.alergia === 'sim' && !c.alergia_remedio) return false;
+    if (f.alergia === 'nao' && c.alergia_remedio) return false;
+    if (f.comorbidade === 'sim' && !c.comorbidades) return false;
+    if (f.comorbidade === 'nao' && c.comorbidades) return false;
+    return true;
+  }
+
   // Troca os contatos de um colaborador pelos novos.
   function gravarContatos(db, idColaborador, contatos) {
     db.contatos = db.contatos.filter(c => c.id_colaborador !== idColaborador);
@@ -86,13 +74,16 @@ window.SPX = window.SPX || {};
 
   const dataLocal = {
     // Lista da busca: só nome, turno e líder (sem dado de saúde).
-    buscar(termo) {
+    // Precisa de pelo menos 2 letras no nome OU de algum filtro.
+    buscar(termo, filtros) {
       const db = carregar();
       const busca = normalizar(termo);
-      if (busca.length < 2) return Promise.resolve([]);
+      const f = SPX.regras.normalizarFiltros(filtros);
+      const temFiltro = Object.keys(f).length > 0;
+      if (busca.length < 2 && !temFiltro) return Promise.resolve([]);
 
       const achados = db.colaboradores
-        .filter(c => normalizar(c.nome).includes(busca))
+        .filter(c => (busca.length < 2 || normalizar(c.nome).includes(busca)) && passaFiltros(c, f))
         .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'))
         .map(c => {
           const lider = acharLider(db, c.id_lider);
@@ -194,7 +185,7 @@ window.SPX = window.SPX || {};
       return Promise.resolve(clonar(lista));
     },
 
-    // Só para testes: volta aos dados de partida.
+    // Volta aos dados de partida (usado nos testes e no botão "Restaurar dados de teste").
     resetar() {
       try { localStorage.removeItem(CHAVE); } catch (e) { /* ignora */ }
       return Promise.resolve();

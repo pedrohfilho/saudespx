@@ -78,5 +78,28 @@ SPX.regras = (function () {
     };
   }
 
-  return { TURNOS, TIPOS_SANGUINEOS, LIMITE_OBSERVACAO, validarColaborador, validarLider, validarAtendimento };
+  // Filtros da busca. Valores que não existem são ignorados.
+  //   turno: T1..T4 | id_lider: número ou "sem" | tipo_sanguineo: A+, O-, ...
+  //   alergia: "sim" ou "nao" | comorbidade: "sim" ou "nao"
+  function normalizarFiltros(entrada) {
+    const f = entrada || {};
+    const limpo = {};
+    if (TURNOS.includes(f.turno)) limpo.turno = f.turno;
+    const lider = texto(f.id_lider);
+    if (lider === 'sem' || /^\d+$/.test(lider)) limpo.id_lider = lider;
+    if (TIPOS_SANGUINEOS.includes(f.tipo_sanguineo)) limpo.tipo_sanguineo = f.tipo_sanguineo;
+    if (f.alergia === 'sim' || f.alergia === 'nao') limpo.alergia = f.alergia;
+    if (f.comorbidade === 'sim' || f.comorbidade === 'nao') limpo.comorbidade = f.comorbidade;
+    return limpo;
+  }
+
+  function contarFiltros(entrada) {
+    return Object.keys(normalizarFiltros(entrada)).length;
+  }
+
+  return {
+    TURNOS, TIPOS_SANGUINEOS, LIMITE_OBSERVACAO,
+    validarColaborador, validarLider, validarAtendimento,
+    normalizarFiltros, contarFiltros
+  };
 })();

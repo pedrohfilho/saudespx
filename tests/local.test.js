@@ -10,7 +10,7 @@ global.localStorage = {
   setItem: (k, v) => { mem[k] = String(v); },
   removeItem: (k) => { delete mem[k]; }
 };
-['core/colaborador', 'data/local'].forEach((n) => {
+['core/colaborador', 'seed/seed-minimo', 'data/local'].forEach((n) => {
   eval(fs.readFileSync(path.join(__dirname, '../js/' + n + '.js'), 'utf8'));
 });
 
@@ -48,12 +48,38 @@ async function nega(p, trecho) {
     assert.deepStrictEqual(Object.keys(primeiro).sort(), ['id_colaborador', 'lider', 'nome', 'turno']);
   });
 
+  await teste('filtro sozinho lista sem precisar de nome', async () => {
+    const t1 = await D.buscar('', { turno: 'T1' });
+    assert.deepStrictEqual(t1.map(x => x.nome), ['Ana Souza', 'José Antônio Reis']);
+    assert.deepStrictEqual((await D.buscar('a', { turno: 'T3' })).map(x => x.nome), ['Anabela Rocha']);
+  });
+
+  await teste('filtros se combinam (todos precisam bater)', async () => {
+    assert.deepStrictEqual((await D.buscar('', { turno: 'T2', alergia: 'sim' })).map(x => x.nome), ['Marina Costa']);
+    assert.deepStrictEqual((await D.buscar('', { turno: 'T2', alergia: 'nao' })).map(x => x.nome), ['Paulo Henrique Dias']);
+    assert.deepStrictEqual(await D.buscar('', { turno: 'T3', alergia: 'sim' }), []);
+  });
+
+  await teste('filtros por líder, tipo sanguíneo e comorbidade', async () => {
+    assert.deepStrictEqual((await D.buscar('', { id_lider: '2' })).map(x => x.nome), ['Marina Costa', 'Paulo Henrique Dias']);
+    assert.deepStrictEqual((await D.buscar('', { id_lider: 'sem' })).map(x => x.nome), ['Anabela Rocha']);
+    assert.deepStrictEqual((await D.buscar('', { tipo_sanguineo: 'O-' })).map(x => x.nome), ['Anabela Rocha']);
+    assert.deepStrictEqual((await D.buscar('', { comorbidade: 'sim' })).map(x => x.nome), ['Ana Souza', 'Marina Costa', 'Paulo Henrique Dias']);
+    assert.deepStrictEqual((await D.buscar('', { comorbidade: 'nao' })).map(x => x.nome), ['Anabela Rocha', 'José Antônio Reis']);
+  });
+
+  await teste('nome e filtro juntos; filtro inválido é ignorado', async () => {
+    assert.deepStrictEqual((await D.buscar('ana', { turno: 'T1' })).map(x => x.nome), ['Ana Souza']);
+    assert.deepStrictEqual(await D.buscar('', { turno: 'T9' }), []);
+    assert.strictEqual(SPX.regras.contarFiltros({ turno: 'T1', alergia: 'sim', tipo_sanguineo: 'Z+' }), 2);
+  });
+
   await teste('abrir a ficha devolve contatos e líder e grava a consulta', async () => {
     const f = await D.obterFicha(1);
     assert.strictEqual(f.colaborador.nome, 'Ana Souza');
     assert.strictEqual(f.lider.nome, 'Carla Mendes');
     assert.strictEqual(f.contatos.length, 2);
-    const consultas = JSON.parse(mem.spx_local_v1).consultas;
+    const consultas = JSON.parse(mem.spx_local_v2).consultas;
     assert.strictEqual(consultas.length, 1);
     assert.strictEqual(consultas[0].id_colaborador, 1);
   });
@@ -137,7 +163,7 @@ async function nega(p, trecho) {
   });
 
   await teste('os dados continuam depois de "recarregar"', async () => {
-    const guardado = JSON.parse(mem.spx_local_v1);
+    const guardado = JSON.parse(mem.spx_local_v2);
     assert.ok(guardado.colaboradores.length >= 7);
     await D.resetar();
     assert.strictEqual((await D.buscar('rita')).length, 0);
