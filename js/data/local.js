@@ -24,7 +24,7 @@ window.SPX = window.SPX || {};
       { id_contato: 1, id_colaborador: 1, nome: 'Marcos Souza', telefone: '(71) 90000-0001' },
       { id_contato: 2, id_colaborador: 1, nome: 'Lúcia Souza', telefone: '(71) 90000-0002' },
       { id_contato: 3, id_colaborador: 2, nome: 'Clara Reis', telefone: '(71) 90000-0003' },
-      { id_contato: 4, id_colaborador: 3, nome: 'Pedro Costa', telefone: '(71) 90000-0004' },
+      { id_contato: 4, id_colaborador: 3, nome: 'Paulo Costa', telefone: '(71) 90000-0004' },
       { id_contato: 5, id_colaborador: 4, nome: 'Sônia Dias', telefone: '(71) 90000-0005' },
       { id_contato: 6, id_colaborador: 5, nome: 'Rui Rocha', telefone: '(71) 90000-0006' }
     ],

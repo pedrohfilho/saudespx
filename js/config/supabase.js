@@ -1,6 +1,7 @@
 // Dados PÚBLICOS do projeto no Supabase (Project Settings > API).
 // A chave "publishable" pode ficar no código: quem protege os dados são a RLS e a criptografia.
-// NUNCA colocar aqui: service_role, senha do banco, chave do Vault.
+// NUNCA colocar aqui: chave de serviço (service_role) nem senha do banco.
+// Este arquivo ainda não é carregado pelo index.html (fase 3).
 window.SPX = window.SPX || {};
 
 SPX.config = {
