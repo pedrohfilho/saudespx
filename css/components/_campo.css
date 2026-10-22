@@ -4,6 +4,13 @@
   font-weight: 600;
 }
 
+.campo-grupo { margin-top: 12px; }
+
+textarea.campo {
+  min-height: 84px;
+  resize: vertical;
+}
+
 /* 16px evita o zoom automático ao focar o campo no iPhone */
 .campo {
   width: 100%;

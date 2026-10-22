@@ -5,6 +5,7 @@ window.SPX = window.SPX || {};
 SPX.regras = (function () {
   const TURNOS = ['T1', 'T2', 'T3', 'T4'];
   const TIPOS_SANGUINEOS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+  const LIMITE_OBSERVACAO = 500;
 
   function texto(valor) {
     return String(valor == null ? '' : valor).trim();
@@ -64,14 +65,18 @@ SPX.regras = (function () {
   function validarAtendimento(entrada) {
     const levadoPor = texto(entrada.levado_por).replace(/\s+/g, ' ');
     if (!levadoPor) return { erro: 'Informe quem está levando ao atendimento.' };
+    const observacao = texto(entrada.observacao);
+    if (observacao.length > LIMITE_OBSERVACAO) {
+      return { erro: 'A observação pode ter até ' + LIMITE_OBSERVACAO + ' caracteres.' };
+    }
     return {
       dados: {
         id_colaborador: entrada.id_colaborador,
         levado_por: levadoPor,
-        observacao: texto(entrada.observacao)
+        observacao
       }
     };
   }
 
-  return { TURNOS, TIPOS_SANGUINEOS, validarColaborador, validarLider, validarAtendimento };
+  return { TURNOS, TIPOS_SANGUINEOS, LIMITE_OBSERVACAO, validarColaborador, validarLider, validarAtendimento };
 })();

@@ -1,0 +1,41 @@
+#atend-retorno { margin-top: 12px; }
+#atend-retorno .status { margin-bottom: 4px; }
+#atend-form .botao { margin-top: 12px; width: 100%; }
+
+.historico {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.historico-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--borda);
+}
+
+.historico-item:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.historico-data {
+  color: var(--texto-suave);
+  font-size: 0.85rem;
+}
+
+.historico-quem { font-weight: 600; }
+
+.historico-obs {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 768px) {
+  #atend-form .botao { width: auto; }
+}

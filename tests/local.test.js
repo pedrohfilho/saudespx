@@ -71,6 +71,12 @@ async function nega(p, trecho) {
     await nega(D.registrarAtendimento({ id_colaborador: 1, levado_por: '  ', observacao: 'x' }), 'quem está levando');
   });
 
+  await teste('observação do atendimento tem limite de 500 caracteres', async () => {
+    await nega(D.registrarAtendimento({ id_colaborador: 1, levado_por: 'Bia', observacao: 'x'.repeat(501) }), '500 caracteres');
+    await D.registrarAtendimento({ id_colaborador: 3, levado_por: 'Bia', observacao: 'x'.repeat(500) });
+    await D.resetar();
+  });
+
   await teste('atendimento em colaborador inexistente dá erro', async () => {
     await nega(D.registrarAtendimento({ id_colaborador: 999, levado_por: 'Fulano' }), 'não encontrado');
   });

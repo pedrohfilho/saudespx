@@ -63,7 +63,10 @@ SPX.screens.ficha = (function () {
           '<p>' + esc(colaborador.comorbidades || 'Nenhuma informada.') + '</p>' +
         '</section>' +
         blocoContatos(contatos) +
+        '<div id="ficha-atendimento"></div>' +
       '</article>';
+
+    SPX.screens.atendimento(raiz.querySelector('#ficha-atendimento'), colaborador.id_colaborador);
   }
 
   function abrir(raiz, idColaborador) {
