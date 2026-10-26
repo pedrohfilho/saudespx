@@ -3,22 +3,6 @@
 window.SPX = window.SPX || {};
 
 SPX.acesso = (function () {
-  function traduzir(erro) {
-    if (!erro) return 'Erro desconhecido.';
-    if (erro.code === '42501') return 'Sem permissão para esta ação.';
-    return erro.message || 'Erro desconhecido.';
-  }
-
-  function chamar(nome, args) {
-    return SPX.db.rpc(nome, args || {}).then(
-      function (resposta) {
-        if (resposta.error) throw new Error(traduzir(resposta.error));
-        return resposta.data;
-      },
-      function () { throw new Error('Não foi possível falar com o servidor. Confira a internet.'); }
-    );
-  }
-
   // Sessão atual (ou null). Espera o Supabase terminar o login quando a pessoa volta do Google.
   function sessao() {
     return SPX.db.auth.getSession().then(function (r) { return r.data.session; });
@@ -29,7 +13,7 @@ SPX.acesso = (function () {
       provider: 'google',
       options: { redirectTo: location.origin + location.pathname, scopes: 'openid email profile' }
     }).then(function (r) {
-      if (r.error) throw new Error(traduzir(r.error));
+      if (r.error) throw new Error(r.error.message || 'Erro ao entrar com o Google.');
     });
   }
 
@@ -49,15 +33,15 @@ SPX.acesso = (function () {
     entrarComGoogle: entrarComGoogle,
     sair: sair,
     aoSair: aoSair,
-    meuAcesso: function () { return chamar('meu_acesso'); },
-    pedirAcesso: function (nome) { return chamar('pedir_acesso', { p_nome: nome || null }); },
-    listarPedidos: function () { return chamar('listar_pedidos'); },
-    listarAcessos: function () { return chamar('listar_acessos'); },
-    responderPedido: function (id, nivel) { return chamar('responder_pedido', { p_id: id, p_nivel: nivel }); },
-    negarPedido: function (id) { return chamar('negar_pedido', { p_id: id }); },
+    meuAcesso: function () { return SPX.rpc('meu_acesso'); },
+    pedirAcesso: function (nome) { return SPX.rpc('pedir_acesso', { p_nome: nome || null }); },
+    listarPedidos: function () { return SPX.rpc('listar_pedidos'); },
+    listarAcessos: function () { return SPX.rpc('listar_acessos'); },
+    responderPedido: function (id, nivel) { return SPX.rpc('responder_pedido', { p_id: id, p_nivel: nivel }); },
+    negarPedido: function (id) { return SPX.rpc('negar_pedido', { p_id: id }); },
     definirAcesso: function (email, nivel, nome) {
-      return chamar('definir_acesso', { p_email: email, p_nivel: nivel, p_nome: nome || null });
+      return SPX.rpc('definir_acesso', { p_email: email, p_nivel: nivel, p_nome: nome || null });
     },
-    removerAcesso: function (email) { return chamar('remover_acesso', { p_email: email }); }
+    removerAcesso: function (email) { return SPX.rpc('remover_acesso', { p_email: email }); }
   };
 })();

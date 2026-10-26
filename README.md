@@ -20,15 +20,15 @@ Substitui uma planilha de emergência por uma tela de busca rápida, pensada par
 |---|---|---|
 | 1 | Aplicação local, com os dados guardados no navegador | pronta |
 | 2 | Login com Google e controle de acesso por nível (leitura, edição, responsável), com pedido e aprovação | telas prontas (login, pedido de acesso e acessos); falta publicar o app no Google para o login aceitar qualquer conta |
-| 3 | Banco de dados no Supabase, com criptografia dos dados sensíveis | a fazer |
+| 3 | Dados no Supabase, com criptografia e conferência do nível de acesso no banco | pronta no código (); falta rodar no banco |
 | 4 | PIN opcional, troca de usuário em aparelho compartilhado, publicação | a fazer |
 
-Na fase 1 os dados ficam em texto simples, só no navegador de quem abre a página, e não são compartilhados. Por isso dados reais de pessoas só entram a partir da fase 3.
+O app lê e grava os dados sempre pelas funções do banco (fase 3). A camada local (, em texto simples no navegador) existe só para os testes automáticos e nunca é usada com o banco disponível.
 
 ## Decisões de arquitetura
 
 - **HTML, CSS e JavaScript puro, sem etapa de build.** Scripts clássicos, tudo no objeto global `SPX`.
-- **Camada de dados com dois lados.** `SPX.data` aponta para `SPX.dataLocal` (localStorage). O lado do Supabase terá as mesmas funções, todas devolvendo Promise, e as telas não mudam na troca.
+- **Camada de dados com dois lados.** `SPX.data` aponta para `SPX.dataSupabase` (funções do banco) ou, só nos testes, para `SPX.dataLocal`. As duas têm as mesmas funções, todas devolvendo Promise, e as telas não sabem a diferença.
 - **Regras de cadastro isoladas** em `js/core/colaborador.js`, sem tela e sem armazenamento, cobertas por testes.
 - **Todo texto digitado é escapado** antes de entrar no HTML.
 - **Mobile-first.** Conferido em 320, 375, 768, 1280 e 1900 px.
@@ -53,7 +53,7 @@ saudespx/
 │   ├── app.js          rotas (#/...) e inicialização
 │   ├── config/         dados de conexão (usados na fase 3)
 │   ├── core/           regras e funções de apoio
-│   ├── data/           cliente do Supabase, login e acesso, e os dados locais
+│   ├── data/           cliente do Supabase, chamadas ao banco (rpc), login e acesso, dados (supabase e local)
 │   ├── screens/        telas: login, pedido de acesso, acessos, busca, ficha, atendimento, cadastro
 │   └── ui/             peças de interface
 └── tests/              testes das regras e da camada de dados
@@ -126,9 +126,12 @@ node tests/local.test.js
 node tests/util.test.js
 node tests/niveis.test.js
 node tests/cpf.test.js
+node tests/supabase.test.js
 ```
 
 Os testes usam uma fixture de 5 pessoas inventadas (`tests/fixtura-minima.js`); os CPFs dos testes são números que só passam na conta do dígito verificador, não são de pessoas. O app começa vazio.
+
+Os testes do **banco** (segurança por nível, criptografia, CPF, busca e filtros) e o teste ponta a ponta (código do app contra o SQL) rodam num Postgres local (PGlite), fora do repositório, para não exigir instalação.
 
 **CPF no banco:** `supabase/02_cpf.sql` guarda o CPF cifrado e um índice cego (HMAC com a chave do Vault) para achar a pessoa e impedir repetição sem decifrar tudo.
 
