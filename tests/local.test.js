@@ -10,9 +10,9 @@ global.localStorage = {
   setItem: (k, v) => { mem[k] = String(v); },
   removeItem: (k) => { delete mem[k]; }
 };
-['core/colaborador', 'seed/seed-minimo', 'data/local'].forEach((n) => {
-  eval(fs.readFileSync(path.join(__dirname, '../js/' + n + '.js'), 'utf8'));
-});
+eval(fs.readFileSync(path.join(__dirname, '../js/core/colaborador.js'), 'utf8'));
+eval(fs.readFileSync(path.join(__dirname, 'fixtura-minima.js'), 'utf8'));
+eval(fs.readFileSync(path.join(__dirname, '../js/data/local.js'), 'utf8'));
 
 const D = SPX.dataLocal;
 let ok = 0;
@@ -26,6 +26,16 @@ async function nega(p, trecho) {
 
 (async () => {
   await D.resetar();
+
+  await teste('sem dados de partida o app começa vazio', async () => {
+    const fixtura = SPX.seed;
+    SPX.seed = undefined;
+    await D.resetar();
+    assert.deepStrictEqual(await D.buscar('', { turno: 'T1' }), []);
+    assert.deepStrictEqual(await D.listarLideres(), []);
+    SPX.seed = fixtura;
+    await D.resetar();
+  });
 
   await teste('busca ignora acento e maiúscula', async () => {
     const r = await D.buscar('JOSE');
@@ -79,7 +89,7 @@ async function nega(p, trecho) {
     assert.strictEqual(f.colaborador.nome, 'Ana Souza');
     assert.strictEqual(f.lider.nome, 'Carla Mendes');
     assert.strictEqual(f.contatos.length, 2);
-    const consultas = JSON.parse(mem.spx_local_v2).consultas;
+    const consultas = JSON.parse(mem.spx_local_v3).consultas;
     assert.strictEqual(consultas.length, 1);
     assert.strictEqual(consultas[0].id_colaborador, 1);
   });
@@ -163,7 +173,7 @@ async function nega(p, trecho) {
   });
 
   await teste('os dados continuam depois de "recarregar"', async () => {
-    const guardado = JSON.parse(mem.spx_local_v2);
+    const guardado = JSON.parse(mem.spx_local_v3);
     assert.ok(guardado.colaboradores.length >= 7);
     await D.resetar();
     assert.strictEqual((await D.buscar('rita')).length, 0);

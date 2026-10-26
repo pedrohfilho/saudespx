@@ -17,12 +17,12 @@ Substitui uma planilha de emergência por uma tela de busca rápida, pensada par
 
 | Fase | Conteúdo | Situação |
 |---|---|---|
-| 1 | Aplicação local com dados fictícios guardados no navegador | pronta |
+| 1 | Aplicação local, com os dados guardados no navegador | pronta |
 | 2 | Login por código enviado ao e-mail, com lista de pessoas autorizadas | a fazer |
 | 3 | Banco de dados no Supabase, com criptografia dos dados sensíveis | a fazer |
 | 4 | PIN opcional, troca de usuário em aparelho compartilhado, publicação | a fazer |
 
-Na fase 1 nenhum dado real é usado. Os dados de teste ficam só no navegador de quem abre a página.
+Na fase 1 os dados ficam em texto simples, só no navegador de quem abre a página, e não são compartilhados. Por isso dados reais de pessoas só entram a partir da fase 3.
 
 ## Decisões de arquitetura
 
@@ -64,18 +64,14 @@ npx serve .
 
 e abra o endereço que ele mostrar. Também funciona abrindo o `index.html` direto no navegador.
 
-## Dados de teste
-
-O app abre com 100 colaboradores fictícios (`js/seed/seed-100.js`), gerados sempre do mesmo jeito. O botão "Restaurar dados de teste", no rodapé, volta a esse conjunto. Os testes automáticos usam um conjunto mínimo de 5 pessoas (`js/seed/seed-minimo.js`).
-
 ## Testes
 
 ```
 node tests/local.test.js
-node tests/seed100.test.js
 ```
+
+Os testes usam uma fixture de 5 pessoas inventadas (`tests/fixtura-minima.js`). O app começa vazio.
 
 ## Observações
 
 - O repositório é público: nenhum dado real, chave secreta ou senha deve ser colocado aqui.
-- Os nomes e telefones dos dados de teste são inventados (telefones com DDD 00).

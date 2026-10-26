@@ -1,14 +1,20 @@
-// Camada de dados LOCAL (fase de testes, sem Supabase).
-// Guarda tudo no localStorage do navegador, com dados FICTÍCIOS (ver js/seed/).
-// Toda função devolve uma Promise, igual vai ser com o Supabase,
+// Camada de dados LOCAL (sem Supabase).
+// Guarda tudo no localStorage do navegador, em texto simples e só neste aparelho.
+// Começa vazia. Toda função devolve uma Promise, igual vai ser com o Supabase,
 // assim as telas não mudam quando trocarmos o lado dos dados.
 window.SPX = window.SPX || {};
 
 (function () {
-  const CHAVE = 'spx_local_v2';
+  const CHAVE = 'spx_local_v3';
 
   function clonar(obj) {
     return JSON.parse(JSON.stringify(obj));
+  }
+
+  // Dados de partida: vazios. Os testes automáticos definem SPX.seed com uma fixture.
+  function dadosDePartida() {
+    if (typeof SPX.seed === 'function') return SPX.seed();
+    return { lideres: [], colaboradores: [], contatos: [], atendimentos: [], consultas: [] };
   }
 
   function carregar() {
@@ -16,7 +22,7 @@ window.SPX = window.SPX || {};
       const salvo = localStorage.getItem(CHAVE);
       if (salvo) return JSON.parse(salvo);
     } catch (e) { /* sem acesso ao armazenamento: usa os dados de partida */ }
-    return SPX.seed();
+    return dadosDePartida();
   }
 
   function salvar(db) {
@@ -39,7 +45,7 @@ window.SPX = window.SPX || {};
   }
 
   function usuarioAtual() {
-    return (SPX.usuario && SPX.usuario.email) || 'local@teste';
+    return (SPX.usuario && SPX.usuario.email) || 'sem login';
   }
 
   function acharLider(db, idLider) {
@@ -185,7 +191,7 @@ window.SPX = window.SPX || {};
       return Promise.resolve(clonar(lista));
     },
 
-    // Volta aos dados de partida (usado nos testes e no botão "Restaurar dados de teste").
+    // Apaga tudo e volta aos dados de partida (usado nos testes automáticos).
     resetar() {
       try { localStorage.removeItem(CHAVE); } catch (e) { /* ignora */ }
       return Promise.resolve();

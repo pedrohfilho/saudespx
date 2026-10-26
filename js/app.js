@@ -36,15 +36,6 @@ window.SPX = window.SPX || {};
   }
 
   function iniciar() {
-    // O botão de restaurar só aparece enquanto os dados forem os locais.
-    document.getElementById('rodape-teste').classList.toggle('oculto', SPX.data !== SPX.dataLocal);
-    document.getElementById('restaurar-teste').addEventListener('click', function () {
-      if (!confirm('Voltar aos dados de teste originais? O que foi cadastrado neste navegador será apagado.')) return;
-      SPX.data.resetar().then(function () {
-        location.hash = '#/';
-        location.reload();
-      });
-    });
     window.addEventListener('hashchange', abrirTela);
     abrirTela();
   }

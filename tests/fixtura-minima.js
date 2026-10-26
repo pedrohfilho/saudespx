@@ -1,5 +1,5 @@
-// Dados de partida mínimos (5 pessoas fictícias). Usados nos testes automáticos.
-// A aplicação usa o conjunto maior, em seed-100.js.
+// Dados de apoio dos testes automáticos (5 pessoas fictícias).
+// Não é carregado pelo app: o app começa vazio.
 window.SPX = window.SPX || {};
 
 SPX.seed = function () {
