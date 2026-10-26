@@ -1,5 +1,6 @@
 .conteudo {
   max-width: var(--largura-max);
   margin: 0 auto;
-  padding: var(--gutter);
+  /* espaço embaixo para o crédito fixo não cobrir o fim da página */
+  padding: var(--gutter) var(--gutter) 64px;
 }

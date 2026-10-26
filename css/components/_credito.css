@@ -1,0 +1,96 @@
+/* Crédito discreto no canto inferior direito.
+   Um café quente (com fumaça) aparece, e depois de alguns segundos troca para o texto, em ciclo. */
+.credito {
+  position: fixed;
+  right: 12px;
+  bottom: 10px;
+  z-index: 5;
+  display: grid;
+  justify-items: end;
+  align-items: center;
+  color: var(--texto-suave);
+  font-size: 0.75rem;
+  text-decoration: none;
+}
+
+/* Aumenta a área de toque sem aumentar o que se vê */
+.credito::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+}
+
+.credito-cafe,
+.credito-texto {
+  grid-area: 1 / 1;
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  box-shadow: 0 1px 3px rgba(29, 35, 48, 0.08);
+}
+
+.credito-cafe {
+  justify-content: center;
+  width: 32px;
+  animation: credito-cafe 12s ease-in-out infinite;
+}
+
+.credito-cafe svg {
+  width: 18px;
+  height: 18px;
+  overflow: visible;
+}
+
+.credito-texto {
+  padding: 0 12px;
+  white-space: nowrap;
+  opacity: 0;
+  animation: credito-texto 12s ease-in-out infinite;
+}
+
+.credito:hover .credito-cafe,
+.credito:focus-visible .credito-cafe { animation: none; opacity: 0; }
+
+.credito:hover .credito-texto,
+.credito:focus-visible .credito-texto { animation: none; opacity: 1; }
+
+.credito:hover .credito-texto { text-decoration: underline; }
+
+/* Fumaça do café */
+.vapor {
+  opacity: 0;
+  transform-box: fill-box;
+  animation: credito-vapor 2.6s ease-in-out infinite;
+}
+.vapor-2 { animation-delay: 0.5s; }
+.vapor-3 { animation-delay: 1s; }
+
+@keyframes credito-cafe {
+  0%, 38% { opacity: 1; }
+  46%, 90% { opacity: 0; }
+  98%, 100% { opacity: 1; }
+}
+
+@keyframes credito-texto {
+  0%, 38% { opacity: 0; }
+  46%, 90% { opacity: 1; }
+  98%, 100% { opacity: 0; }
+}
+
+@keyframes credito-vapor {
+  0% { opacity: 0; transform: translateY(2px); }
+  30% { opacity: 0.9; }
+  100% { opacity: 0; transform: translateY(-3px); }
+}
+
+/* Sem movimento: mostra só o texto, parado */
+@media (prefers-reduced-motion: reduce) {
+  .credito-cafe { display: none; }
+  .credito-texto { animation: none; opacity: 1; }
+  .vapor { animation: none; }
+}
+
+@media print { .credito { display: none; } }
