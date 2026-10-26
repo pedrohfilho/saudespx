@@ -8,7 +8,7 @@ Substitui uma planilha de emergência por uma tela de busca rápida, pensada par
 
 - Busca de colaborador por nome, sem diferenciar acento ou maiúscula.
 - Filtros por turno, líder, tipo sanguíneo, alergia a remédio e comorbidade, sozinhos ou junto com o nome.
-- Ficha com tipo sanguíneo, alergia a remédio, comorbidades, turno, líder e contatos de emergência (com link para ligar).
+- Ficha com tipo sanguíneo, alergia a remédio, comorbidades, turno, líder e contatos de emergência (cada um com Ligar, WhatsApp e Copiar o número).
 - Registro de atendimento: quem acompanhou, observação e data/hora, com histórico por colaborador.
 - Cadastro e edição de colaboradores, líderes e contatos.
 - Registro de cada abertura de ficha (quem consultou e quando).
@@ -18,7 +18,7 @@ Substitui uma planilha de emergência por uma tela de busca rápida, pensada par
 | Fase | Conteúdo | Situação |
 |---|---|---|
 | 1 | Aplicação local, com os dados guardados no navegador | pronta |
-| 2 | Login com Google e controle de acesso por nível (leitura, edição, responsável), com pedido e aprovação | em andamento (SQL pronto em `supabase/01_acesso.sql`) |
+| 2 | Login com Google e controle de acesso por nível (leitura, edição, responsável), com pedido e aprovação | em andamento: banco (`supabase/01_acesso.sql`) e Google configurados; faltam as telas de login, de pedido e de acessos |
 | 3 | Banco de dados no Supabase, com criptografia dos dados sensíveis | a fazer |
 | 4 | PIN opcional, troca de usuário em aparelho compartilhado, publicação | a fazer |
 
@@ -67,6 +67,8 @@ npx serve .
 
 e abra o endereço que ele mostrar. Também funciona abrindo o `index.html` direto no navegador.
 
+O site fica no Vercel (https://saudespx.vercel.app) e atualiza sozinho a cada push no `main`.
+
 ## Controle de acesso
 
 Quem entra com a conta Google mas não tem acesso não vê nenhum dado, só consegue pedir acesso. Os responsáveis aprovam o pedido escolhendo o nível e podem alterar ou remover depois, como no compartilhamento de um documento.
@@ -78,6 +80,36 @@ Quem entra com a conta Google mas não tem acesso não vê nenhum dado, só cons
 | Responsável | O de edição, mais gerenciar quem tem acesso |
 
 A regra vale no servidor: as tabelas ficam fechadas e todo acesso passa por funções do banco que conferem o nível. Os e-mails dos primeiros responsáveis são inseridos direto no painel do banco e não ficam neste repositório.
+
+## Login com Google (para lembrar)
+
+Fluxo: o app chama o Supabase, que leva a pessoa ao Google; o Google devolve ao Supabase (`.../auth/v1/callback`), que cria a sessão e volta ao app. Entrar com o Google não dá acesso aos dados: quem não foi aprovado só consegue pedir acesso.
+
+**Google Cloud** (console.cloud.google.com, projeto `saudespx`, menu **Google Auth Platform**)
+1. **Branding:** nome do app e e-mails de suporte e contato.
+2. **Audience:** `External` (aceita contas de domínios diferentes) e **Publish app**. Em "Testing" só entram e-mails cadastrados como usuários de teste.
+3. **Clients > Create client > Web application.**
+   - *Authorized JavaScript origins:* o endereço do site no ar e `http://localhost:8091`.
+   - *Authorized redirect URIs:* `https://<ref-do-projeto>.supabase.co/auth/v1/callback`.
+4. Guardar o **Client ID** e o **Client secret** (o secret só aparece uma vez; se perder, **Add secret** gera outro).
+
+**Supabase** (painel, menu **Authentication**)
+1. **Sign In / Providers > Google:** ligar e colar Client ID e Client secret.
+2. **URL Configuration:** *Site URL* = endereço do site no ar; *Redirect URLs* = esse endereço com `/**` e `http://localhost:8091/**`.
+3. **Providers > Email:** desligar (o login é só pelo Google).
+
+**Se o endereço do site mudar:** acrescentar o novo no Supabase (*Site URL* e *Redirect URLs*) e no Google (*Authorized JavaScript origins*).
+
+**O que é segredo:** o Client secret (só no painel do Supabase), a chave `sb_secret` e a senha do banco. A URL do projeto, a chave `sb_publishable` e o Client ID podem aparecer.
+
+**Erros comuns**
+- `redirect_uri_mismatch`: o *redirect URI* no Google não é exatamente o do Supabase.
+- `access_denied` ou "app em fase de teste": o app está em Testing; publicar em **Audience**.
+- "Acesso bloqueado" em contas de empresa: o administrador do Google da empresa restringiu apps externos.
+- Volta ao site mas não fica logado: o endereço não está em *Redirect URLs* (com `/**`).
+- Parou para todos: o Client secret mudou ou a conta dona do projeto foi desativada.
+
+**Falta fazer:** desligar o login por e-mail, completar a Branding e publicar o app no Google, e testar com uma conta que não é a dona do projeto.
 
 ## Testes
 
