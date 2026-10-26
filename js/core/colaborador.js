@@ -26,6 +26,10 @@ SPX.regras = (function () {
     const tipo = texto(entrada.tipo_sanguineo).toUpperCase();
     if (tipo && !TIPOS_SANGUINEOS.includes(tipo)) return { erro: 'Tipo sanguíneo inválido.' };
 
+    // CPF é opcional; se vier, precisa ser válido. Guardamos só os 11 dígitos.
+    const cpf = SPX.cpf.somenteDigitos(entrada.cpf);
+    if (cpf && !SPX.cpf.valido(cpf)) return { erro: 'CPF inválido. Confira os números.' };
+
     const alergia = !!entrada.alergia_remedio;
     const alergiaQual = alergia ? texto(entrada.alergia_qual) : '';
     if (alergia && !alergiaQual) return { erro: 'Informe a qual remédio a pessoa tem alergia.' };
@@ -45,6 +49,7 @@ SPX.regras = (function () {
         nome,
         turno: turno || null,
         tipo_sanguineo: tipo || null,
+        cpf: cpf || null,
         alergia_remedio: alergia,
         alergia_qual: alergiaQual,
         comorbidades: texto(entrada.comorbidades),

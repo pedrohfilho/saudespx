@@ -10,6 +10,7 @@ global.localStorage = {
   setItem: (k, v) => { mem[k] = String(v); },
   removeItem: (k) => { delete mem[k]; }
 };
+eval(fs.readFileSync(path.join(__dirname, '../js/core/cpf.js'), 'utf8'));
 eval(fs.readFileSync(path.join(__dirname, '../js/core/colaborador.js'), 'utf8'));
 eval(fs.readFileSync(path.join(__dirname, 'fixtura-minima.js'), 'utf8'));
 eval(fs.readFileSync(path.join(__dirname, '../js/data/local.js'), 'utf8'));
@@ -41,6 +42,38 @@ async function nega(p, trecho) {
     const r = await D.buscar('JOSE');
     assert.strictEqual(r.length, 1);
     assert.strictEqual(r[0].nome, 'José Antônio Reis');
+  });
+
+  await teste('busca por CPF completo acha a pessoa, com ou sem pontuação', async () => {
+    assert.deepStrictEqual((await D.buscar('529.982.247-25')).map(x => x.nome), ['Ana Souza']);
+    assert.deepStrictEqual((await D.buscar('11144477735')).map(x => x.nome), ['José Antônio Reis']);
+    assert.deepStrictEqual(await D.buscar('123.456.789-09'), []);
+    assert.deepStrictEqual(await D.buscar('529.982'), []); // CPF incompleto não busca
+  });
+
+  await teste('CPF na ficha vem só com os dígitos; lista da busca não traz o CPF', async () => {
+    assert.strictEqual((await D.obterFicha(1)).colaborador.cpf, '52998224725');
+    const [primeiro] = await D.buscar('529.982.247-25');
+    assert.ok(!('cpf' in primeiro));
+  });
+
+  await teste('cadastro valida o CPF e não aceita repetido', async () => {
+    await nega(D.cadastrarColaborador({ nome: 'Cpf Ruim', cpf: '123.456.789-10' }), 'CPF inválido');
+    await nega(D.cadastrarColaborador({ nome: 'Cpf Repetido', cpf: '529.982.247-25' }), 'Já existe um colaborador com este CPF: Ana Souza');
+    const c = await D.cadastrarColaborador({ nome: 'Com Cpf Novo', cpf: '123.456.789-09' });
+    assert.strictEqual(c.cpf, '12345678909');
+    const sem = await D.cadastrarColaborador({ nome: 'Sem Cpf Um' });
+    const sem2 = await D.cadastrarColaborador({ nome: 'Sem Cpf Dois', cpf: '' });
+    assert.strictEqual(sem.cpf, null); assert.strictEqual(sem2.cpf, null); // vários sem CPF são permitidos
+  });
+
+  await teste('edição pode manter o próprio CPF, mas não pegar o de outra pessoa', async () => {
+    await D.atualizarColaborador(1, { nome: 'Ana Souza', cpf: '529.982.247-25' });
+    await nega(D.atualizarColaborador(1, { nome: 'Ana Souza', cpf: '111.444.777-35' }), 'Já existe um colaborador com este CPF: José');
+    await D.atualizarColaborador(1, { nome: 'Ana Souza', cpf: '' });
+    assert.strictEqual((await D.obterFicha(1)).colaborador.cpf, null);
+    await D.atualizarColaborador(1, { nome: 'Ana Souza', cpf: '52998224725' }); // volta ao que era
+    await D.resetar();
   });
 
   await teste('busca com menos de 2 letras devolve vazio', async () => {

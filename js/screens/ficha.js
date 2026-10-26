@@ -18,6 +18,25 @@ SPX.screens.ficha = (function () {
     '</section>';
   }
 
+  // O CPF aparece com o começo e o fim escondidos; só mostra inteiro quando a pessoa pede.
+  function blocoCpf(colaborador) {
+    if (!colaborador.cpf) {
+      return '<section class="bloco"><h3>CPF</h3><p class="dica">Não informado.</p></section>';
+    }
+    // O CPF inteiro não vai para o HTML: fica só na memória do código (ver ligarBotoes).
+    const mascara = SPX.cpf.mascarar(colaborador.cpf);
+    return '<section class="bloco">' +
+      '<h3>CPF</h3>' +
+      '<div class="contato">' +
+        '<span id="cpf-valor" class="cpf-valor">' + esc(mascara) + '</span>' +
+        '<div class="contato-acoes">' +
+          '<button class="botao botao-secundario" type="button" data-cpf-alternar aria-pressed="false">Mostrar</button>' +
+          '<button class="botao botao-secundario" type="button" data-cpf-copiar>Copiar</button>' +
+        '</div>' +
+      '</div>' +
+    '</section>';
+  }
+
   function blocoContatos(contatos) {
     if (!contatos.length) {
       return '<section class="bloco">' +
@@ -74,26 +93,45 @@ SPX.screens.ficha = (function () {
           '<h3>Comorbidades</h3>' +
           '<p>' + esc(colaborador.comorbidades || 'Nenhuma informada.') + '</p>' +
         '</section>' +
+        blocoCpf(colaborador) +
         blocoContatos(contatos) +
         '<div id="ficha-atendimento"></div>' +
       '</article>';
 
-    ligarBotoesDeCopiar(raiz);
+    ligarBotoes(raiz, colaborador.cpf ? SPX.cpf.formatar(colaborador.cpf) : '');
     SPX.screens.atendimento(raiz.querySelector('#ficha-atendimento'), colaborador.id_colaborador);
   }
 
-  // Botão "Copiar": copia o número e avisa no próprio botão por um instante.
-  function ligarBotoesDeCopiar(raiz) {
-    const lista = raiz.querySelector('.contatos');
-    if (!lista) return;
-    lista.addEventListener('click', function (evento) {
-      const botao = evento.target.closest('[data-copiar]');
-      if (!botao) return;
+  // Botões da ficha: "Copiar" (avisa no próprio botão por um instante) e "Mostrar/Ocultar" do CPF.
+  // cpfCompleto (já formatado) fica só aqui, na memória, e não no HTML da página.
+  function ligarBotoes(raiz, cpfCompleto) {
+    const ficha = raiz.querySelector('.ficha');
+    const mascara = cpfCompleto ? SPX.cpf.mascarar(cpfCompleto) : '';
+
+    function copiar(botao, texto) {
       const original = botao.textContent;
-      copiarTexto(botao.dataset.copiar).then(function (copiou) {
+      copiarTexto(texto).then(function (copiou) {
         botao.textContent = copiou ? 'Copiado!' : 'Não copiou';
         setTimeout(function () { botao.textContent = original; }, 1600);
       });
+    }
+
+    ficha.addEventListener('click', function (evento) {
+      const alternar = evento.target.closest('[data-cpf-alternar]');
+      if (alternar) {
+        const valor = ficha.querySelector('#cpf-valor');
+        const mostrando = alternar.getAttribute('aria-pressed') === 'true';
+        valor.textContent = mostrando ? mascara : cpfCompleto;
+        alternar.textContent = mostrando ? 'Mostrar' : 'Ocultar';
+        alternar.setAttribute('aria-pressed', String(!mostrando));
+        return;
+      }
+
+      const copiarCpf = evento.target.closest('[data-cpf-copiar]');
+      if (copiarCpf) return copiar(copiarCpf, cpfCompleto);
+
+      const copiarNumero = evento.target.closest('[data-copiar]');
+      if (copiarNumero) copiar(copiarNumero, copiarNumero.dataset.copiar);
     });
   }
 

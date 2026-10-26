@@ -69,6 +69,12 @@
   min-width: 0;
 }
 
+.cpf-valor {
+  font-size: 1.1rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
 .contato-nome {
   font-weight: 600;
   overflow-wrap: anywhere;

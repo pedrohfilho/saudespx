@@ -6,7 +6,8 @@ Substitui uma planilha de emergência por uma tela de busca rápida, pensada par
 
 ## Funcionalidades
 
-- Busca de colaborador por nome, sem diferenciar acento ou maiúscula.
+- Busca de colaborador por nome (sem diferenciar acento ou maiúscula) ou por CPF completo.
+- CPF opcional, validado pelos dígitos verificadores, sem repetição entre colaboradores e escondido na ficha até alguém pedir para mostrar (com botão de copiar).
 - Filtros por turno, líder, tipo sanguíneo, alergia a remédio e comorbidade, sozinhos ou junto com o nome.
 - Ficha com tipo sanguíneo, alergia a remédio, comorbidades, turno, líder e contatos de emergência (cada um com Ligar, WhatsApp e Copiar o número).
 - Registro de atendimento: quem acompanhou, observação e data/hora, com histórico por colaborador.
@@ -118,9 +119,12 @@ Fluxo: o app chama o Supabase, que leva a pessoa ao Google; o Google devolve ao 
 node tests/local.test.js
 node tests/util.test.js
 node tests/niveis.test.js
+node tests/cpf.test.js
 ```
 
-Os testes usam uma fixture de 5 pessoas inventadas (`tests/fixtura-minima.js`). O app começa vazio.
+Os testes usam uma fixture de 5 pessoas inventadas (`tests/fixtura-minima.js`); os CPFs dos testes são números que só passam na conta do dígito verificador, não são de pessoas. O app começa vazio.
+
+**CPF no banco:** `supabase/02_cpf.sql` guarda o CPF cifrado e um índice cego (HMAC com a chave do Vault) para achar a pessoa e impedir repetição sem decifrar tudo.
 
 ## Observações
 

@@ -43,6 +43,11 @@ SPX.screens.cadastro = (function () {
             '<label class="campo-rotulo" for="cad-nome">Nome do colaborador</label>' +
             '<input id="cad-nome" class="campo" name="nome" autocomplete="off" value="' + esc(c.nome) + '">' +
           '</div>' +
+          '<div class="campo-grupo">' +
+            '<label class="campo-rotulo" for="cad-cpf">CPF (opcional)</label>' +
+            '<input id="cad-cpf" class="campo" name="cpf" inputmode="numeric" autocomplete="off" maxlength="14" ' +
+              'placeholder="000.000.000-00" value="' + esc(SPX.cpf.formatar(c.cpf)) + '">' +
+          '</div>' +
           '<div class="form-linha">' +
             '<div class="campo-grupo">' +
               '<label class="campo-rotulo" for="cad-turno">Turno</label>' +
@@ -101,6 +106,11 @@ SPX.screens.cadastro = (function () {
     const botao = form.querySelector('button[type="submit"]');
     const listaContatos = raiz.querySelector('#cad-contatos');
 
+    // Vai colocando os pontos e o traço do CPF enquanto a pessoa digita.
+    form.elements.cpf.addEventListener('input', function () {
+      this.value = SPX.cpf.formatar(this.value);
+    });
+
     form.elements.id_lider.addEventListener('change', function () {
       raiz.querySelector('#cad-novo-lider').classList.toggle('oculto', this.value !== NOVO_LIDER);
     });
@@ -145,6 +155,7 @@ SPX.screens.cadastro = (function () {
         .then(idLider => {
           const dados = {
             nome: form.elements.nome.value,
+            cpf: form.elements.cpf.value,
             turno: form.elements.turno.value,
             tipo_sanguineo: form.elements.tipo_sanguineo.value,
             alergia_remedio: form.elements.alergia_remedio.checked,

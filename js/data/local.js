@@ -65,6 +65,18 @@ window.SPX = window.SPX || {};
     return true;
   }
 
+  // Sem termo digitado só os filtros valem; com termo, vale nome parecido ou CPF igual.
+  function bateComTermo(c, busca, cpfBuscado) {
+    if (busca.length < 2 && !cpfBuscado) return true;
+    return normalizar(c.nome).includes(busca) || (!!cpfBuscado && c.cpf === cpfBuscado);
+  }
+
+  // Quem já tem este CPF (ou null). ignorarId serve para a edição não "bater" nela mesma.
+  function donoDoCpf(db, cpf, ignorarId) {
+    if (!cpf) return null;
+    return db.colaboradores.find(c => c.cpf === cpf && c.id_colaborador !== ignorarId) || null;
+  }
+
   // Troca os contatos de um colaborador pelos novos.
   function gravarContatos(db, idColaborador, contatos) {
     db.contatos = db.contatos.filter(c => c.id_colaborador !== idColaborador);
@@ -80,16 +92,18 @@ window.SPX = window.SPX || {};
 
   const dataLocal = {
     // Lista da busca: só nome, turno e líder (sem dado de saúde).
-    // Precisa de pelo menos 2 letras no nome OU de algum filtro.
+    // Precisa de pelo menos 2 letras no nome, um CPF completo OU algum filtro.
     buscar(termo, filtros) {
       const db = carregar();
       const busca = normalizar(termo);
+      const digitos = SPX.cpf.somenteDigitos(termo);
+      const cpfBuscado = digitos.length === 11 ? digitos : '';
       const f = SPX.regras.normalizarFiltros(filtros);
       const temFiltro = Object.keys(f).length > 0;
       if (busca.length < 2 && !temFiltro) return Promise.resolve([]);
 
       const achados = db.colaboradores
-        .filter(c => (busca.length < 2 || normalizar(c.nome).includes(busca)) && passaFiltros(c, f))
+        .filter(c => bateComTermo(c, busca, cpfBuscado) && passaFiltros(c, f))
         .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'))
         .map(c => {
           const lider = acharLider(db, c.id_lider);
@@ -145,6 +159,8 @@ window.SPX = window.SPX || {};
       if (r.erro) return Promise.reject(new Error(r.erro));
       const { contatos, ...campos } = r.dados;
       const db = carregar();
+      const dono = donoDoCpf(db, campos.cpf, null);
+      if (dono) return Promise.reject(new Error('Já existe um colaborador com este CPF: ' + dono.nome + '.'));
       const colaborador = { id_colaborador: proximoId(db.colaboradores, 'id_colaborador'), ...campos };
       db.colaboradores.push(colaborador);
       gravarContatos(db, colaborador.id_colaborador, contatos);
@@ -159,6 +175,8 @@ window.SPX = window.SPX || {};
       const db = carregar();
       const indice = db.colaboradores.findIndex(c => c.id_colaborador === idColaborador);
       if (indice < 0) return Promise.reject(new Error('Colaborador não encontrado.'));
+      const dono = donoDoCpf(db, campos.cpf, idColaborador);
+      if (dono) return Promise.reject(new Error('Já existe um colaborador com este CPF: ' + dono.nome + '.'));
       db.colaboradores[indice] = { id_colaborador: idColaborador, ...campos };
       gravarContatos(db, idColaborador, contatos);
       salvar(db);

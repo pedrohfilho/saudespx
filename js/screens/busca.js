@@ -59,7 +59,7 @@ SPX.screens.busca = (function () {
         '<form id="busca-form" role="search" autocomplete="off">' +
           '<label class="campo-rotulo" for="busca-termo">Buscar colaborador</label>' +
           '<input id="busca-termo" class="campo" type="search" name="termo" ' +
-            'placeholder="Digite o nome" autocapitalize="words" spellcheck="false">' +
+            'placeholder="Digite o nome ou o CPF" autocapitalize="words" spellcheck="false">' +
           painelFiltros(lideres, ultima.filtros) +
         '</form>' +
         '<p id="busca-dica" class="dica" aria-live="polite"></p>' +

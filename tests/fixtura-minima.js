@@ -9,8 +9,8 @@ SPX.seed = function () {
       { id_lider: 2, nome: 'Roberto Lima', turno: 'T2' }
     ],
     colaboradores: [
-      { id_colaborador: 1, nome: 'Ana Souza', turno: 'T1', tipo_sanguineo: 'O+', alergia_remedio: true, alergia_qual: 'Dipirona', comorbidades: 'Asma', id_lider: 1 },
-      { id_colaborador: 2, nome: 'José Antônio Reis', turno: 'T1', tipo_sanguineo: 'A-', alergia_remedio: false, alergia_qual: '', comorbidades: '', id_lider: 1 },
+      { id_colaborador: 1, nome: 'Ana Souza', turno: 'T1', cpf: '52998224725', tipo_sanguineo: 'O+', alergia_remedio: true, alergia_qual: 'Dipirona', comorbidades: 'Asma', id_lider: 1 },
+      { id_colaborador: 2, nome: 'José Antônio Reis', turno: 'T1', cpf: '11144477735', tipo_sanguineo: 'A-', alergia_remedio: false, alergia_qual: '', comorbidades: '', id_lider: 1 },
       { id_colaborador: 3, nome: 'Marina Costa', turno: 'T2', tipo_sanguineo: 'B+', alergia_remedio: true, alergia_qual: 'Penicilina', comorbidades: 'Diabetes', id_lider: 2 },
       { id_colaborador: 4, nome: 'Paulo Henrique Dias', turno: 'T2', tipo_sanguineo: 'AB+', alergia_remedio: false, alergia_qual: '', comorbidades: 'Hipertensão', id_lider: 2 },
       { id_colaborador: 5, nome: 'Anabela Rocha', turno: 'T3', tipo_sanguineo: 'O-', alergia_remedio: false, alergia_qual: '', comorbidades: '', id_lider: null }
