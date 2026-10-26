@@ -83,6 +83,7 @@ A regra vale no servidor: as tabelas ficam fechadas e todo acesso passa por fun√
 
 ```
 node tests/local.test.js
+node tests/util.test.js
 ```
 
 Os testes usam uma fixture de 5 pessoas inventadas (`tests/fixtura-minima.js`). O app come√ßa vazio.

@@ -23,6 +23,38 @@ SPX.util = (function () {
     return String(telefone || '').replace(/[^\d+]/g, '');
   }
 
+  // Número no formato do WhatsApp (só dígitos, com o 55 do Brasil), ou null se não der para usar.
+  //   "(71) 98888-7777" -> "5571988887777"
+  function telefoneParaWhatsApp(telefone) {
+    const digitos = String(telefone || '').replace(/\D/g, '');
+    if (digitos.length === 10 || digitos.length === 11) return '55' + digitos;
+    if ((digitos.length === 12 || digitos.length === 13) && digitos.startsWith('55')) return digitos;
+    return null;
+  }
+
+  // Cópia para navegadores sem a API moderna (ela só funciona em endereço seguro, https).
+  function copiarComSelecao(texto) {
+    const area = document.createElement('textarea');
+    area.value = texto;
+    area.setAttribute('readonly', '');
+    area.style.position = 'fixed';
+    area.style.opacity = '0';
+    document.body.appendChild(area);
+    area.select();
+    let copiou = false;
+    try { copiou = document.execCommand('copy'); } catch (e) { /* sem permissão */ }
+    area.remove();
+    return copiou;
+  }
+
+  // Copia o texto para a área de transferência. Devolve uma Promise com true ou false.
+  function copiarTexto(texto) {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(texto).then(() => true, () => copiarComSelecao(texto));
+    }
+    return Promise.resolve(copiarComSelecao(texto));
+  }
+
   // Espera o usuário parar de digitar antes de chamar a função.
   function atrasar(funcao, milissegundos) {
     let espera = null;
@@ -32,5 +64,5 @@ SPX.util = (function () {
     };
   }
 
-  return { esc, formatarDataHora, telefoneParaLink, atrasar };
+  return { esc, formatarDataHora, telefoneParaLink, telefoneParaWhatsApp, copiarTexto, atrasar };
 })();

@@ -52,10 +52,48 @@
 
 .contato {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--borda);
+}
+
+.contato:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.contato-dados {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.contato-nome {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.contato-telefone {
+  color: var(--texto-suave);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Ligar, WhatsApp e Copiar: três botões do mesmo tamanho */
+.contato-acoes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
   gap: 8px;
 }
 
-.contato-nome { font-weight: 600; }
+.contato-acoes .botao { padding: 8px 10px; }
+
+@media (min-width: 768px) {
+  .contato {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .contato-acoes { grid-template-columns: repeat(3, 108px); }
+}
