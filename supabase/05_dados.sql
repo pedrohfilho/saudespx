@@ -8,8 +8,11 @@
 --
 -- Níveis: leitura = buscar, ver ficha, registrar atendimento.
 --         edição  = o de leitura + cadastrar e editar colaboradores e líderes.
+--         responsável = o de edição + apagar colaboradores (e gerenciar acessos, no 01).
 --
 -- Depende de: 00_base.sql, 01_acesso.sql, 02_cpf.sql. Rodar no SQL Editor. Pode rodar de novo.
+
+create extension if not exists fuzzystrmatch with schema extensions;
 
 -- ---------------------------------------------------------------------------
 -- Apoio (schema private: não fica exposto pela API)
@@ -23,6 +26,17 @@ as $$
   select translate(lower(coalesce(valor, '')),
     'áàâãäéèêëíìîïóòôõöúùûüçñ',
     'aaaaaeeeeiiiiooooouuuucn')
+$$;
+
+-- Telefone no padrão (71) 98888-7777 a partir só dos dígitos (10 ou 11).
+create or replace function private.formatar_telefone(valor text)
+returns text
+language sql immutable set search_path = ''
+as $$
+  select case length(private.cpf_digitos(valor))
+    when 10 then '(' || substr(private.cpf_digitos(valor), 1, 2) || ') ' || substr(private.cpf_digitos(valor), 3, 4) || '-' || substr(private.cpf_digitos(valor), 7)
+    when 11 then '(' || substr(private.cpf_digitos(valor), 1, 2) || ') ' || substr(private.cpf_digitos(valor), 3, 5) || '-' || substr(private.cpf_digitos(valor), 8)
+  end
 $$;
 
 -- Os dados de um colaborador, já decifrados.
@@ -81,8 +95,10 @@ begin
     telefone := btrim(coalesce(item->>'telefone', ''));
     if nome_contato = '' and telefone = '' then continue; end if;
     if nome_contato = '' or telefone = '' then raise exception 'Cada contato precisa de nome e telefone.'; end if;
-    if length(private.cpf_digitos(telefone)) < 8 then raise exception 'Telefone do contato inválido: %', telefone; end if;
-    contatos := contatos || jsonb_build_array(jsonb_build_object('nome', nome_contato, 'telefone', telefone));
+    if length(private.cpf_digitos(telefone)) not in (10, 11) then
+      raise exception 'Telefone do contato inválido: %. Use o DDD e o número, só com números.', telefone;
+    end if;
+    contatos := contatos || jsonb_build_array(jsonb_build_object('nome', nome_contato, 'telefone', private.formatar_telefone(telefone)));
   end loop;
 
   return jsonb_build_object(
@@ -127,6 +143,7 @@ begin
 end
 $$;
 
+revoke all on function private.formatar_telefone(text) from public, anon, authenticated;
 revoke all on function private.norm(text) from public, anon, authenticated;
 revoke all on function private.colaborador_json(bigint) from public, anon, authenticated;
 revoke all on function private.validar_colaborador(jsonb) from public, anon, authenticated;
@@ -137,15 +154,48 @@ revoke all on function private.gravar_contatos(bigint, jsonb) from public, anon,
 -- Leitura (nível leitura ou maior)
 -- ---------------------------------------------------------------------------
 
+-- true se todas as palavras da busca (com 3 letras ou mais) se parecem com alguma palavra do nome:
+-- até 1 letra diferente nas palavras curtas e até 2 nas longas ("marya" acha "Maria", "souza" acha "Sousa").
+create or replace function private.nomes_parecidos(p_chave text, p_termo text)
+returns boolean
+language plpgsql immutable set search_path = ''
+as $$
+declare
+  q text;
+  w text;
+  achou boolean;
+  limite int;
+begin
+  if p_termo ~ '\d' then return false; end if;
+  for q in select x from unnest(string_to_array(btrim(p_termo), ' ')) as x where length(x) >= 3 loop
+    limite := case when length(q) <= 4 then 1 else 2 end;
+    achou := false;
+    for w in select x from unnest(string_to_array(p_chave, ' ')) as x where x <> '' loop
+      if extensions.levenshtein(w, q) <= limite
+         or extensions.levenshtein(left(w, length(q)), q) <= limite then
+        achou := true;
+        exit;
+      end if;
+    end loop;
+    if not achou then return false; end if;
+  end loop;
+  return true;
+end
+$$;
+
+revoke all on function private.nomes_parecidos(text, text) from public, anon, authenticated;
+
 -- Lista da busca: só nome, turno e líder (sem dado de saúde). Precisa de 2 letras do nome,
 -- de um CPF completo ou de algum filtro. Filtros: turno, id_lider ("sem" = sem líder),
 -- tipo_sanguineo, alergia ("sim"/"nao"), comorbidade ("sim"/"nao").
+-- Busca esperta: sem acento e por parte do nome; se nada for achado, mostra nomes PARECIDOS
+-- (letra trocada ou faltando), marcados com "parecido": true.
 create or replace function public.buscar_colaboradores(p_termo text default '', p_filtros jsonb default '{}'::jsonb)
 returns jsonb
 language plpgsql stable security definer set search_path = ''
 as $$
 declare
-  termo text := private.norm(btrim(coalesce(p_termo, '')));
+  termo text := private.norm(regexp_replace(btrim(coalesce(p_termo, '')), '\s+', ' ', 'g'));
   hash_cpf text := case when length(private.cpf_digitos(p_termo)) = 11 then private.cpf_hash(p_termo) else null end;
   f_turno text := nullif(p_filtros->>'turno', '');
   f_lider text := nullif(p_filtros->>'id_lider', '');
@@ -160,25 +210,39 @@ begin
     return '[]'::jsonb;
   end if;
 
+  with base as (
+    select t.*
+      from (
+        select c.id_colaborador, c.turno, c.id_lider, c.alergia_remedio, c.tipo_sanguineo, c.comorbidades, c.cpf_hash,
+               private.decifrar(c.nome) as nome,
+               private.norm(private.decifrar(c.nome)) as chave,
+               (select private.decifrar(l.nome) from public.lideres l where l.id_lider = c.id_lider) as lider
+          from public.colaboradores c
+      ) t
+     where (f_turno is null or t.turno = f_turno)
+       and (f_lider is null or (f_lider = 'sem' and t.id_lider is null) or (f_lider <> 'sem' and t.id_lider::text = f_lider))
+       and (f_tipo is null or private.decifrar(t.tipo_sanguineo) = f_tipo)
+       and (f_alergia is null or (f_alergia = 'sim' and t.alergia_remedio) or (f_alergia = 'nao' and not t.alergia_remedio))
+       and (f_comorb is null
+            or (f_comorb = 'sim' and coalesce(private.decifrar(t.comorbidades), '') <> '')
+            or (f_comorb = 'nao' and coalesce(private.decifrar(t.comorbidades), '') = ''))
+  ),
+  exatos as (
+    select b.*, false as parecido from base b
+     where length(termo) < 2 or position(termo in b.chave) > 0 or (hash_cpf is not null and b.cpf_hash = hash_cpf)
+  ),
+  parecidos as (
+    select b.*, true as parecido from base b
+     where length(termo) >= 3
+       and not exists (select 1 from exatos)
+       and private.nomes_parecidos(b.chave, termo)
+  )
   select coalesce(jsonb_agg(
-           jsonb_build_object('id_colaborador', t.id_colaborador, 'nome', t.nome, 'turno', t.turno, 'lider', t.lider)
-           order by t.chave, t.id_colaborador), '[]'::jsonb)
+           jsonb_build_object('id_colaborador', r.id_colaborador, 'nome', r.nome, 'turno', r.turno,
+                              'lider', r.lider, 'parecido', r.parecido)
+           order by r.chave, r.id_colaborador), '[]'::jsonb)
     into resultado
-    from (
-      select c.id_colaborador, c.turno, c.id_lider, c.alergia_remedio, c.tipo_sanguineo, c.comorbidades, c.cpf_hash,
-             private.decifrar(c.nome) as nome,
-             private.norm(private.decifrar(c.nome)) as chave,
-             (select private.decifrar(l.nome) from public.lideres l where l.id_lider = c.id_lider) as lider
-        from public.colaboradores c
-    ) t
-   where (length(termo) < 2 or position(termo in t.chave) > 0 or (hash_cpf is not null and t.cpf_hash = hash_cpf))
-     and (f_turno is null or t.turno = f_turno)
-     and (f_lider is null or (f_lider = 'sem' and t.id_lider is null) or (f_lider <> 'sem' and t.id_lider::text = f_lider))
-     and (f_tipo is null or private.decifrar(t.tipo_sanguineo) = f_tipo)
-     and (f_alergia is null or (f_alergia = 'sim' and t.alergia_remedio) or (f_alergia = 'nao' and not t.alergia_remedio))
-     and (f_comorb is null
-          or (f_comorb = 'sim' and coalesce(private.decifrar(t.comorbidades), '') <> '')
-          or (f_comorb = 'nao' and coalesce(private.decifrar(t.comorbidades), '') = ''));
+    from (select * from exatos union all select * from parecidos) r;
 
   return resultado;
 end
@@ -371,6 +435,38 @@ end
 $$;
 
 -- ---------------------------------------------------------------------------
+-- Responsável (nível responsável)
+-- ---------------------------------------------------------------------------
+
+-- Registro de quem apagou o quê. Guarda só o número do colaborador, nunca os dados dele.
+create table if not exists public.exclusoes (
+  id bigint generated always as identity primary key,
+  id_colaborador bigint not null,
+  excluido_por text,
+  data_hora timestamptz not null default now()
+);
+
+alter table public.exclusoes enable row level security;
+
+-- Apaga o colaborador e tudo dele (contatos, atendimentos e o registro de consultas). Não tem volta.
+create or replace function public.excluir_colaborador(p_id bigint)
+returns void
+language plpgsql security definer set search_path = ''
+as $$
+begin
+  perform private.exigir_nivel('responsavel');
+  if not exists (select 1 from public.colaboradores c where c.id_colaborador = p_id) then
+    raise exception 'Colaborador não encontrado.';
+  end if;
+
+  delete from public.atendimentos where id_colaborador = p_id;
+  delete from public.consultas where id_colaborador = p_id;
+  delete from public.colaboradores where id_colaborador = p_id; -- os contatos saem junto
+  insert into public.exclusoes (id_colaborador, excluido_por) values (p_id, private.email_atual());
+end
+$$;
+
+-- ---------------------------------------------------------------------------
 -- Permissões: só quem está logado chama (e cada função confere o nível por dentro).
 -- ---------------------------------------------------------------------------
 revoke all on function public.buscar_colaboradores(text, jsonb) from public, anon;
@@ -381,6 +477,7 @@ revoke all on function public.listar_atendimentos(bigint) from public, anon;
 revoke all on function public.cadastrar_lider(text, text) from public, anon;
 revoke all on function public.cadastrar_colaborador(jsonb) from public, anon;
 revoke all on function public.atualizar_colaborador(bigint, jsonb) from public, anon;
+revoke all on function public.excluir_colaborador(bigint) from public, anon;
 
 grant execute on function public.buscar_colaboradores(text, jsonb) to authenticated;
 grant execute on function public.obter_ficha(bigint) to authenticated;
@@ -390,3 +487,4 @@ grant execute on function public.listar_atendimentos(bigint) to authenticated;
 grant execute on function public.cadastrar_lider(text, text) to authenticated;
 grant execute on function public.cadastrar_colaborador(jsonb) to authenticated;
 grant execute on function public.atualizar_colaborador(bigint, jsonb) to authenticated;
+grant execute on function public.excluir_colaborador(bigint) to authenticated;
