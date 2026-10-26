@@ -38,6 +38,7 @@ Na fase 1 os dados ficam em texto simples, só no navegador de quem abre a pági
 ```
 saudespx/
 ├── index.html
+├── privacidade.html    política de privacidade (linkada na tela de login)
 ├── componentes/        peças independentes, reutilizáveis em outros sistemas (ver o LEIA-ME de cada uma)
 │   └── credito/        selo animado "Desenvolvido por ..."
 ├── supabase/           scripts SQL do banco (rodar no SQL Editor, na ordem dos números)
@@ -86,7 +87,7 @@ A regra vale no servidor: as tabelas ficam fechadas e todo acesso passa por fun�
 Fluxo: o app chama o Supabase, que leva a pessoa ao Google; o Google devolve ao Supabase (`.../auth/v1/callback`), que cria a sessão e volta ao app. Entrar com o Google não dá acesso aos dados: quem não foi aprovado só consegue pedir acesso.
 
 **Google Cloud** (console.cloud.google.com, projeto `saudespx`, menu **Google Auth Platform**)
-1. **Branding:** nome do app e e-mails de suporte e contato.
+1. **Branding:** nome do app, e-mail de suporte e **e-mail de contato do desenvolvedor** (sem ele o Google não deixa publicar). Página inicial e política de privacidade são opcionais: `/` e `/privacidade.html` do site. Não subir logo (pede verificação do app).
 2. **Audience:** `External` (aceita contas de domínios diferentes) e **Publish app**. Em "Testing" só entram e-mails cadastrados como usuários de teste.
 3. **Clients > Create client > Web application.**
    - *Authorized JavaScript origins:* o endereço do site no ar e `http://localhost:8091`.

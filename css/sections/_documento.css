@@ -1,0 +1,14 @@
+/* Páginas de texto (política de privacidade) */
+.documento .bloco p,
+.documento .bloco li {
+  max-width: 70ch;
+}
+
+.documento .bloco p + p { margin-top: 8px; }
+
+.documento .bloco ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 20px;
+}
