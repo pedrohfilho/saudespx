@@ -11,19 +11,32 @@
 <body>
   <header class="topo">
     <a class="topo-marca" href="#/">SaúdeSPX</a>
-    <nav class="topo-nav" aria-label="Principal">
+    <nav id="topo-nav" class="topo-nav oculto" aria-label="Principal">
       <a href="#/" data-rota="busca">Buscar</a>
-      <a href="#/novo" data-rota="novo">Novo colaborador</a>
+      <a href="#/novo" data-rota="novo" data-minimo="edicao">Novo colaborador</a>
+      <a href="#/acessos" data-rota="acessos" data-minimo="responsavel">Acessos <span id="selo-pedidos" class="selo oculto"></span></a>
     </nav>
+    <div id="topo-usuario" class="topo-usuario oculto">
+      <span id="topo-email" class="topo-email"></span>
+      <button id="topo-sair" class="topo-sair" type="button">Sair</button>
+    </div>
   </header>
 
   <main id="app" class="conteudo"></main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
   <script src="componentes/credito/credito.js"></script>
+  <script src="js/config/supabase.js"></script>
   <script src="js/core/util.js"></script>
+  <script src="js/core/niveis.js"></script>
   <script src="js/core/colaborador.js"></script>
+  <script src="js/data/cliente.js"></script>
+  <script src="js/data/acesso.js"></script>
   <script src="js/data/local.js"></script>
   <script src="js/ui/ui.js"></script>
+  <script src="js/screens/login.js"></script>
+  <script src="js/screens/pedido.js"></script>
+  <script src="js/screens/acessos.js"></script>
   <script src="js/screens/busca.js"></script>
   <script src="js/screens/atendimento.js"></script>
   <script src="js/screens/ficha.js"></script>

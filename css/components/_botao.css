@@ -21,6 +21,16 @@
   color: var(--destaque);
 }
 
+/* Botão que ocupa a linha toda no celular e volta ao tamanho do texto em telas largas */
+.botao-largo {
+  width: 100%;
+  margin-top: 12px;
+}
+
+@media (min-width: 768px) {
+  .botao-largo { width: auto; }
+}
+
 .botao[disabled] {
   opacity: 0.6;
   cursor: not-allowed;

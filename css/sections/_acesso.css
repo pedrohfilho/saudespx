@@ -1,0 +1,86 @@
+/* Telas de entrada (login e pedido de acesso) */
+.entrada {
+  max-width: 480px;
+  margin: 24px auto 0;
+}
+
+.entrada h2 { margin-bottom: 8px; }
+.entrada p { margin: 0 0 8px; }
+.entrada .botao-largo { width: 100%; }
+
+/* Tela dos responsáveis */
+#acessos-retorno { margin-top: 12px; }
+
+.acesso-lista {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.acesso-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--borda);
+}
+
+.acesso-item:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.acesso-quem {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.acesso-nome {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.acesso-email,
+.acesso-data {
+  color: var(--texto-suave);
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
+.acesso-acoes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 8px;
+}
+
+.acesso-acoes .campo { grid-column: 1 / -1; }
+
+.selo-voce {
+  display: inline-block;
+  padding: 0 8px;
+  background: var(--destaque-suave);
+  border-radius: 999px;
+  color: var(--destaque);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+#acessos-novo .botao { margin-top: 12px; }
+
+@media (min-width: 768px) {
+  .acesso-item {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .acesso-acoes {
+    display: flex;
+    align-items: center;
+  }
+
+  .acesso-acoes .campo { width: 150px; }
+}

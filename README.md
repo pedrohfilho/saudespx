@@ -18,7 +18,7 @@ Substitui uma planilha de emergência por uma tela de busca rápida, pensada par
 | Fase | Conteúdo | Situação |
 |---|---|---|
 | 1 | Aplicação local, com os dados guardados no navegador | pronta |
-| 2 | Login com Google e controle de acesso por nível (leitura, edição, responsável), com pedido e aprovação | em andamento: banco (`supabase/01_acesso.sql`) e Google configurados; faltam as telas de login, de pedido e de acessos |
+| 2 | Login com Google e controle de acesso por nível (leitura, edição, responsável), com pedido e aprovação | telas prontas (login, pedido de acesso e acessos); falta publicar o app no Google para o login aceitar qualquer conta |
 | 3 | Banco de dados no Supabase, com criptografia dos dados sensíveis | a fazer |
 | 4 | PIN opcional, troca de usuário em aparelho compartilhado, publicação | a fazer |
 
@@ -51,8 +51,8 @@ saudespx/
 │   ├── app.js          rotas (#/...) e inicialização
 │   ├── config/         dados de conexão (usados na fase 3)
 │   ├── core/           regras e funções de apoio
-│   ├── data/           acesso aos dados
-│   ├── screens/        telas: busca, ficha, atendimento, cadastro
+│   ├── data/           cliente do Supabase, login e acesso, e os dados locais
+│   ├── screens/        telas: login, pedido de acesso, acessos, busca, ficha, atendimento, cadastro
 │   └── ui/             peças de interface
 └── tests/              testes das regras e da camada de dados
 ```
@@ -65,7 +65,7 @@ Sirva a pasta com um servidor estático, por exemplo:
 npx serve .
 ```
 
-e abra o endereço que ele mostrar. Também funciona abrindo o `index.html` direto no navegador.
+e abra o endereço que ele mostrar. O app precisa de internet, porque o login é com o Google (para testar localmente, o endereço `http://localhost:8091` já está cadastrado no Google e no Supabase).
 
 O site fica no Vercel (https://saudespx.vercel.app) e atualiza sozinho a cada push no `main`.
 
@@ -116,6 +116,7 @@ Fluxo: o app chama o Supabase, que leva a pessoa ao Google; o Google devolve ao 
 ```
 node tests/local.test.js
 node tests/util.test.js
+node tests/niveis.test.js
 ```
 
 Os testes usam uma fixture de 5 pessoas inventadas (`tests/fixtura-minima.js`). O app começa vazio.

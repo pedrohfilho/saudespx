@@ -26,11 +26,6 @@
 
 #cad-add-contato { margin-top: 12px; }
 
-.botao-largo {
-  width: 100%;
-  margin-top: 12px;
-}
-
 @media (min-width: 768px) {
   .form-linha {
     display: grid;
@@ -44,6 +39,4 @@
     padding-bottom: 0;
     border-bottom: 0;
   }
-
-  .botao-largo { width: auto; }
 }
