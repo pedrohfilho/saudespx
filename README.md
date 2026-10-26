@@ -38,6 +38,8 @@ Na fase 1 os dados ficam em texto simples, só no navegador de quem abre a pági
 ```
 saudespx/
 ├── index.html
+├── componentes/        peças independentes, reutilizáveis em outros sistemas (ver o LEIA-ME de cada uma)
+│   └── credito/        selo animado "Desenvolvido por ..."
 ├── css/
 │   ├── main.css        importa todos os módulos (a ordem importa)
 │   ├── base/           variáveis, reset, tipografia, utilitários

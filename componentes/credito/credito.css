@@ -1,0 +1,114 @@
+/* Crédito animado: um café quente (com fumaça) que troca, em ciclo, para "Desenvolvido por ...".
+   Sem dependências. Para mudar cores e tempos, sobrescreva as variáveis abaixo no seu CSS. */
+:root {
+  --credito-cafe: #6f4e37;       /* xícara de café */
+  --credito-vapor: #a98467;      /* fumaça */
+  --credito-azul: #0a66c2;       /* texto "Desenvolvido por" */
+  --credito-fundo: #ffffff;
+  --credito-borda-cafe: #e3d5c8;
+  --credito-borda-texto: #bcd6f1;
+  --credito-ciclo: 12s;          /* duração de uma volta completa */
+}
+
+.credito {
+  position: fixed;
+  right: 12px;
+  bottom: 10px;
+  z-index: 5;
+  display: grid;
+  justify-items: end;
+  align-items: center;
+  font: 0.75rem/1.2 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  text-decoration: none;
+}
+
+/* Aumenta a área de toque sem aumentar o que se vê */
+.credito::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+}
+
+.credito-cafe,
+.credito-texto {
+  grid-area: 1 / 1;
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  background: var(--credito-fundo);
+  border: 1px solid var(--credito-borda-cafe);
+  border-radius: 999px;
+  box-shadow: 0 1px 3px rgba(29, 35, 48, 0.08);
+}
+
+.credito-cafe {
+  justify-content: center;
+  width: 32px;
+  color: var(--credito-cafe);
+  animation: credito-cafe var(--credito-ciclo) ease-in-out infinite;
+}
+
+.credito-cafe svg {
+  width: 18px;
+  height: 18px;
+  overflow: visible;
+}
+
+.credito-xicara {
+  fill: var(--credito-cafe);
+  stroke: var(--credito-cafe);
+}
+
+.credito-vapor {
+  stroke: var(--credito-vapor);
+  opacity: 0;
+  animation: credito-vapor 2.6s ease-in-out infinite;
+}
+.credito-vapor:nth-of-type(2) { animation-delay: 0.5s; }
+.credito-vapor:nth-of-type(3) { animation-delay: 1s; }
+
+.credito-texto {
+  padding: 0 12px;
+  border-color: var(--credito-borda-texto);
+  color: var(--credito-azul);
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  animation: credito-texto var(--credito-ciclo) ease-in-out infinite;
+}
+
+/* Ao passar o mouse ou focar, mostra o texto e para a animação */
+.credito:hover .credito-cafe,
+.credito:focus-visible .credito-cafe { animation: none; opacity: 0; }
+
+.credito:hover .credito-texto,
+.credito:focus-visible .credito-texto { animation: none; opacity: 1; text-decoration: underline; }
+
+.credito:focus-visible { outline: 2px solid var(--credito-azul); outline-offset: 4px; border-radius: 999px; }
+
+@keyframes credito-cafe {
+  0%, 38% { opacity: 1; }
+  46%, 90% { opacity: 0; }
+  98%, 100% { opacity: 1; }
+}
+
+@keyframes credito-texto {
+  0%, 38% { opacity: 0; }
+  46%, 90% { opacity: 1; }
+  98%, 100% { opacity: 0; }
+}
+
+@keyframes credito-vapor {
+  0% { opacity: 0; transform: translateY(2px); }
+  30% { opacity: 0.9; }
+  100% { opacity: 0; transform: translateY(-3px); }
+}
+
+/* Quem prefere menos movimento vê só o texto, parado */
+@media (prefers-reduced-motion: reduce) {
+  .credito-cafe { display: none; }
+  .credito-texto { animation: none; opacity: 1; }
+  .credito-vapor { animation: none; }
+}
+
+@media print { .credito { display: none; } }

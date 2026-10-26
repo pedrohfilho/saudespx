@@ -36,6 +36,7 @@ window.SPX = window.SPX || {};
   }
 
   function iniciar() {
+    Credito.montar({ nome: 'Pedro Henrique', url: 'https://www.linkedin.com/in/pedro-henrique-211b70346' });
     window.addEventListener('hashchange', abrirTela);
     abrirTela();
   }
