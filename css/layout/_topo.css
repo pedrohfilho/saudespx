@@ -58,16 +58,13 @@
 .topo-nav {
   grid-area: menu;
   display: flex;
-  gap: 4px;
-  overflow-x: auto;
-  scrollbar-width: none;
+  flex-wrap: wrap;
+  gap: 2px 4px;
 }
-
-.topo-nav::-webkit-scrollbar { display: none; }
 
 .topo-nav a {
   flex: none;
-  padding: 8px 12px;
+  padding: 6px 10px;
   border-radius: 8px;
   color: var(--topo-link);
   font-weight: 600;

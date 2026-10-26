@@ -1,0 +1,71 @@
+/* Aba Emergência: telefones, mapa e quem cuida do sistema */
+.telefones {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.telefone {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--borda);
+}
+
+.telefone:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.telefone-dados {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.telefone-nome { font-weight: 600; }
+
+.telefone-desc {
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+}
+
+.mapa-opcao {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--borda);
+}
+
+.mapa-opcao h4 { margin-bottom: 8px; }
+
+.mapa-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.mapa-opcao > .botao { width: 100%; }
+
+.mapa-retorno:empty { display: none; }
+
+.equipe-lista {
+  margin: 0 0 8px;
+  padding-left: 20px;
+}
+
+.bloco h4 { margin-top: 10px; }
+
+@media (min-width: 768px) {
+  .telefone {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .telefone .botao { min-width: 200px; }
+  .mapa-opcao > .botao { width: auto; }
+}

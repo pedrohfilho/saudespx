@@ -55,6 +55,15 @@ SPX.util = (function () {
     return Promise.resolve(copiarComSelecao(texto));
   }
 
+  // Tira acento e maiúscula, para comparar nomes ("José" e "jose" ficam iguais).
+  function normalizar(texto) {
+    return String(texto == null ? '' : texto)
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .toLowerCase()
+      .trim();
+  }
+
   // Espera o usuário parar de digitar antes de chamar a função.
   function atrasar(funcao, milissegundos) {
     let espera = null;
@@ -64,5 +73,5 @@ SPX.util = (function () {
     };
   }
 
-  return { esc, formatarDataHora, telefoneParaLink, telefoneParaWhatsApp, copiarTexto, atrasar };
+  return { esc, formatarDataHora, telefoneParaLink, telefoneParaWhatsApp, copiarTexto, normalizar, atrasar };
 })();

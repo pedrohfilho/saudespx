@@ -23,21 +23,5 @@ SPX.ui = (function () {
     }).join('');
   }
 
-  // Atalhos de emergência: ligar para o SAMU, Bombeiros e Polícia e achar hospital ou UPA perto
-  // (abre o mapa do aparelho já procurando perto de onde a pessoa está; nenhum dado é enviado).
-  function atalhosEmergencia() {
-    const mapa = 'https://www.google.com/maps/search/';
-    return '<section class="bloco emergencia" aria-label="Atalhos de emergência">' +
-      '<h3>Emergência</h3>' +
-      '<div class="emergencia-grade">' +
-        '<a class="botao botao-secundario" href="tel:192">SAMU 192</a>' +
-        '<a class="botao botao-secundario" href="tel:193">Bombeiros 193</a>' +
-        '<a class="botao botao-secundario" href="tel:190">Polícia 190</a>' +
-        '<a class="botao botao-secundario" href="' + mapa + 'hospital+pronto+socorro+perto+de+mim" target="_blank" rel="noopener noreferrer">Hospital mais perto</a>' +
-        '<a class="botao botao-secundario" href="' + mapa + 'UPA+24+horas+perto+de+mim" target="_blank" rel="noopener noreferrer">UPA mais perto</a>' +
-      '</div>' +
-    '</section>';
-  }
-
-  return { mensagemErro, mensagemInfo, opcoes, atalhosEmergencia };
+  return { mensagemErro, mensagemInfo, opcoes };
 })();

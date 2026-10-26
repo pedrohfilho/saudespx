@@ -64,7 +64,6 @@ SPX.screens.busca = (function () {
         '</form>' +
         '<p id="busca-dica" class="dica" aria-live="polite"></p>' +
         '<ul id="busca-lista" class="lista-resultados"></ul>' +
-        SPX.ui.atalhosEmergencia() +
       '</section>';
 
     const form = raiz.querySelector('#busca-form');

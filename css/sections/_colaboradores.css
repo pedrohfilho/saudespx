@@ -1,0 +1,33 @@
+/* Aba Colaboradores: total, filtros e lista em ordem alfabética */
+.colab-total {
+  margin: 0 0 4px;
+  color: var(--texto-suave);
+  font-weight: 600;
+}
+
+.colab-filtros {
+  display: grid;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+@media (min-width: 768px) {
+  .colab-filtros { grid-template-columns: 2fr 1fr 1fr; }
+}
+
+.colab-lista {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.colab-lista .letra {
+  margin-top: 8px;
+  color: var(--destaque);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.colab-lista .letra:first-child { margin-top: 0; }

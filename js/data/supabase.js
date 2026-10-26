@@ -26,6 +26,16 @@ SPX.dataSupabase = (function () {
       return SPX.rpc('listar_lideres');
     },
 
+    // Todos os colaboradores em ordem alfabética: só nome, turno e líder.
+    listarColaboradores: function () {
+      return SPX.rpc('listar_colaboradores');
+    },
+
+    // Responsáveis e quem edita (nome e nível, sem e-mail).
+    listarEquipe: function () {
+      return SPX.rpc('listar_equipe');
+    },
+
     cadastrarLider: function (entrada) {
       const r = SPX.regras.validarLider(entrada);
       if (r.erro) return recusar(r.erro);

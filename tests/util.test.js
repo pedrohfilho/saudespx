@@ -35,6 +35,12 @@ teste('link de ligação mantém só dígitos e o +', () => {
   assert.strictEqual(U.telefoneParaLink('+55 (71) 98888-7777'), '+5571988887777');
 });
 
+teste('normalizar tira acento e maiúscula', () => {
+  assert.strictEqual(U.normalizar('  José ANTÔNIO  '), 'jose antonio');
+  assert.strictEqual(U.normalizar('Çã'), 'ca');
+  assert.strictEqual(U.normalizar(null), '');
+});
+
 teste('esc protege o HTML', () => {
   assert.strictEqual(U.esc('<b onclick="x">&\''), '&lt;b onclick=&quot;x&quot;&gt;&amp;&#39;');
 });

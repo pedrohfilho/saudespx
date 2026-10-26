@@ -24,14 +24,18 @@ SPX.screens.ficha = (function () {
       return '<section class="bloco"><h3>CPF</h3><p class="dica">Não informado.</p></section>';
     }
     // O CPF inteiro não vai para o HTML: fica só na memória do código (ver ligarBotoes).
+    // Copiar o CPF é só para o responsável; os demais podem apenas ver.
     const mascara = SPX.cpf.mascarar(colaborador.cpf);
+    const botaoCopiar = SPX.pode('responsavel')
+      ? '<button class="botao botao-secundario" type="button" data-cpf-copiar>Copiar</button>'
+      : '';
     return '<section class="bloco">' +
       '<h3>CPF</h3>' +
       '<div class="contato">' +
         '<span id="cpf-valor" class="cpf-valor">' + esc(mascara) + '</span>' +
         '<div class="contato-acoes">' +
           '<button class="botao botao-secundario" type="button" data-cpf-alternar aria-pressed="false">Mostrar</button>' +
-          '<button class="botao botao-secundario" type="button" data-cpf-copiar>Copiar</button>' +
+          botaoCopiar +
         '</div>' +
       '</div>' +
     '</section>';
@@ -101,7 +105,6 @@ SPX.screens.ficha = (function () {
         '</section>' +
         blocoCpf(colaborador) +
         blocoContatos(contatos) +
-        SPX.ui.atalhosEmergencia() +
         '<div id="ficha-atendimento"></div>' +
       '</article>';
 
@@ -149,7 +152,7 @@ SPX.screens.ficha = (function () {
       }
 
       const copiarCpf = evento.target.closest('[data-cpf-copiar]');
-      if (copiarCpf) return copiar(copiarCpf, cpfCompleto);
+      if (copiarCpf && SPX.pode('responsavel')) return copiar(copiarCpf, cpfCompleto);
 
       const copiarNumero = evento.target.closest('[data-copiar]');
       if (copiarNumero) copiar(copiarNumero, copiarNumero.dataset.copiar);

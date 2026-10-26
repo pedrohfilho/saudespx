@@ -117,6 +117,24 @@ window.SPX = window.SPX || {};
       return Promise.resolve(achados);
     },
 
+    // Todos os colaboradores em ordem alfabética: só nome, turno e líder.
+    listarColaboradores() {
+      const db = carregar();
+      const lista = db.colaboradores
+        .slice()
+        .sort((a, b) => normalizar(a.nome).localeCompare(normalizar(b.nome), 'pt-BR'))
+        .map(c => {
+          const lider = acharLider(db, c.id_lider);
+          return { id_colaborador: c.id_colaborador, nome: c.nome, turno: c.turno, lider: lider ? lider.nome : null };
+        });
+      return Promise.resolve(lista);
+    },
+
+    // A camada local não tem níveis de acesso, então não há equipe para mostrar.
+    listarEquipe() {
+      return Promise.resolve([]);
+    },
+
     // Abre a ficha completa e grava quem consultou.
     obterFicha(idColaborador) {
       const db = carregar();

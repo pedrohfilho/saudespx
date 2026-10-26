@@ -235,5 +235,14 @@ async function nega(p, trecho) {
     assert.strictEqual((await D.buscar('rita')).length, 0);
   });
 
+  await teste('lista de colaboradores: todos, em ordem alfabética, sem dado de saúde nem CPF', async () => {
+    const l = await D.listarColaboradores();
+    assert.deepStrictEqual(l.map(x => x.nome), ['Ana Souza', 'Anabela Rocha', 'José Antônio Reis', 'Marina Costa', 'Paulo Henrique Dias']);
+    assert.deepStrictEqual(Object.keys(l[0]).sort(), ['id_colaborador', 'lider', 'nome', 'turno']);
+    assert.strictEqual(l[0].lider, 'Carla Mendes');
+    assert.strictEqual(l[1].lider, null);
+    assert.deepStrictEqual(await D.listarEquipe(), []);
+  });
+
   console.log('\n' + ok + ' testes ok');
 })();

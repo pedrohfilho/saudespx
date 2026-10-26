@@ -8,6 +8,8 @@ window.SPX = window.SPX || {};
     { nome: 'busca', padrao: /^\/ficha\/(\d+)$/, minimo: 'leitura', abrir: (raiz, id) => SPX.screens.ficha(raiz, Number(id)) },
     { nome: 'novo', padrao: /^\/novo$/, minimo: 'edicao', abrir: (raiz) => SPX.screens.cadastro(raiz) },
     { nome: 'busca', padrao: /^\/editar\/(\d+)$/, minimo: 'edicao', abrir: (raiz, id) => SPX.screens.cadastro(raiz, Number(id)) },
+    { nome: 'colaboradores', padrao: /^\/colaboradores$/, minimo: 'leitura', abrir: (raiz) => SPX.screens.colaboradores(raiz) },
+    { nome: 'emergencia', padrao: /^\/emergencia$/, minimo: 'leitura', abrir: (raiz) => SPX.screens.emergencia(raiz) },
     { nome: 'acessos', padrao: /^\/acessos$/, minimo: 'responsavel', abrir: (raiz) => SPX.screens.acessos(raiz) }
   ];
 

@@ -41,6 +41,12 @@ async function nega(p, trecho) {
     assert.deepStrictEqual(chamadas[2].args, { p_id_colaborador: 7 });
   });
 
+  await teste('listas de colaboradores e da equipe chamam as funções certas', async () => {
+    chamadas.length = 0;
+    await D.listarColaboradores(); await D.listarEquipe();
+    assert.deepStrictEqual(chamadas.map(c => c.nome), ['listar_colaboradores', 'listar_equipe']);
+  });
+
   await teste('cadastro envia os dados já limpos (nome, CPF só dígitos, contatos sem linha vazia)', async () => {
     await D.cadastrarColaborador({ nome: '  Ana   Souza ', cpf: '529.982.247-25', tipo_sanguineo: 'o+', alergia_remedio: true, alergia_qual: 'Dipirona',
       id_lider: '2', contatos: [{ nome: 'Marcos', telefone: '(71) 98888-7777' }, { nome: '', telefone: '' }] });

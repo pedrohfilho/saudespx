@@ -7,13 +7,14 @@ Substitui uma planilha de emergência por uma tela de busca rápida, pensada par
 ## Funcionalidades
 
 - Busca de colaborador por nome (sem diferenciar acento ou maiúscula) ou por CPF completo. Se não houver nome igual, mostra nomes **parecidos** (letra trocada ou faltando, como "Marya" para "Maria").
-- CPF opcional, validado pelos dígitos verificadores, sem repetição entre colaboradores e escondido na ficha até alguém pedir para mostrar (com botão de copiar).
+- CPF opcional, validado pelos dígitos verificadores, sem repetição entre colaboradores e escondido na ficha até alguém pedir para mostrar. Só o responsável vê o botão de copiar.
 - Filtros por turno, líder, tipo sanguíneo, alergia a remédio e comorbidade, sozinhos ou junto com o nome.
 - Ficha com tipo sanguíneo, alergia a remédio, comorbidades, turno, líder e contatos de emergência (cada um com Ligar, WhatsApp e Copiar o número).
 - Registro de atendimento: quem acompanhou, observação e data/hora, com histórico por colaborador.
 - Cadastro e edição de colaboradores, líderes e contatos. O telefone aceita só números (DDD + número) e é guardado no padrão `(71) 98888-7777`.
 - Os responsáveis podem apagar um colaborador (com tudo dele, sem volta) e remover contas de acesso. O banco guarda só o registro de quem apagou, sem os dados.
-- Atalhos de emergência: ligar para SAMU (192), Bombeiros (193) e Polícia (190) e abrir o mapa já procurando hospital ou UPA perto de quem está usando. Nenhum dado de pessoa é enviado.
+- Aba **Emergência**: telefones importantes (SAMU 192, Bombeiros 193, Polícia 190, Defesa Civil 199, Disque-Intoxicação 0800 722 6001, PRF 191) com botão de ligar; hospital ou UPA perto pela localização de quem está usando, perto da base (Pirajá, Salvador) ou em outro lugar digitado; e a lista de quem cuida do sistema (responsáveis e quem pode editar, sem e-mails). Nenhum dado de pessoa é enviado e a localização não é guardada.
+- Aba **Colaboradores**: todos os cadastrados em ordem alfabética, com o total e filtro por nome, turno e líder. Mostra só nome, turno e líder.
 - Registro de cada abertura de ficha (quem consultou e quando).
 
 ## Estado atual
@@ -56,7 +57,7 @@ saudespx/
 │   ├── config/         dados de conexão (usados na fase 3)
 │   ├── core/           regras e funções de apoio
 │   ├── data/           cliente do Supabase, chamadas ao banco (rpc), login e acesso, dados (supabase e local)
-│   ├── screens/        telas: login, pedido de acesso, acessos, busca, ficha, atendimento, cadastro
+│   ├── screens/        telas: login, pedido de acesso, acessos, busca, colaboradores, emergência, ficha, atendimento, cadastro
 │   └── ui/             peças de interface
 └── tests/              testes das regras e da camada de dados
 ```
@@ -130,6 +131,7 @@ node tests/niveis.test.js
 node tests/cpf.test.js
 node tests/supabase.test.js
 node tests/telefone.test.js
+node tests/mapa.test.js
 ```
 
 Os testes usam uma fixture de 5 pessoas inventadas (`tests/fixtura-minima.js`); os CPFs dos testes são números que só passam na conta do dígito verificador, não são de pessoas. O app começa vazio.
@@ -137,6 +139,8 @@ Os testes usam uma fixture de 5 pessoas inventadas (`tests/fixtura-minima.js`); 
 Os testes do **banco** (segurança por nível, criptografia, CPF, busca e filtros) e o teste ponta a ponta (código do app contra o SQL) rodam num Postgres local (PGlite), fora do repositório, para não exigir instalação.
 
 **CPF no banco:** `supabase/02_cpf.sql` guarda o CPF cifrado e um índice cego (HMAC com a chave do Vault) para achar a pessoa e impedir repetição sem decifrar tudo.
+
+**Listas:** `supabase/06_listas.sql` cria as funções das abas Colaboradores (nome, turno e líder de todos) e Emergência (nome e nível de quem cuida do sistema). Nenhuma devolve CPF, dado de saúde ou e-mail.
 
 ## Observações
 
