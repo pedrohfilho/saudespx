@@ -58,17 +58,58 @@
 .topo-nav {
   grid-area: menu;
   display: flex;
-  flex-wrap: wrap;
-  gap: 2px 4px;
+  gap: 2px;
 }
 
+/* Celular: todos os itens lado a lado numa linha só, com nomes curtos */
 .topo-nav a {
-  flex: none;
-  padding: 6px 10px;
+  flex: 1 1 auto;
+  padding: 8px 4px;
   border-radius: 8px;
   color: var(--topo-link);
+  font-size: 0.82rem;
   font-weight: 600;
+  text-align: center;
   text-decoration: none;
+  white-space: nowrap;
+}
+
+.topo-nav .longo { display: none; }
+
+/* No celular o número de pedidos vira uma bolinha no canto, sem alargar o menu */
+.topo-nav a { position: relative; }
+
+.topo-nav .selo {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 16px;
+  margin: 0;
+  padding: 0 4px;
+  font-size: 0.65rem;
+  line-height: 16px;
+}
+
+@media (min-width: 700px) {
+  .topo-nav { gap: 4px; }
+
+  .topo-nav a {
+    flex: none;
+    padding: 8px 12px;
+    font-size: 1rem;
+  }
+
+  .topo-nav .longo { display: inline; }
+  .topo-nav .curto { display: none; }
+
+  .topo-nav .selo {
+    position: static;
+    min-width: 20px;
+    margin-left: 4px;
+    padding: 0 6px;
+    font-size: 0.75rem;
+    line-height: 20px;
+  }
 }
 
 .topo-nav a:hover { background: var(--topo-ativo); }
