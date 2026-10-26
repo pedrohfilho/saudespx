@@ -10,21 +10,25 @@
 </head>
 <body>
   <header class="topo">
-    <a class="topo-marca" href="#/">SaúdeSPX</a>
-    <nav id="topo-nav" class="topo-nav oculto" aria-label="Principal">
-      <a href="#/" data-rota="busca">Buscar</a>
-      <a href="#/novo" data-rota="novo" data-minimo="edicao">Novo colaborador</a>
-      <a href="#/acessos" data-rota="acessos" data-minimo="responsavel">Acessos <span id="selo-pedidos" class="selo oculto"></span></a>
-    </nav>
-    <div id="topo-usuario" class="topo-usuario oculto">
-      <span id="topo-email" class="topo-email"></span>
-      <button id="topo-sair" class="topo-sair" type="button">Sair</button>
+    <div class="topo-interno">
+      <a class="topo-marca" href="#/">SaúdeSPX</a>
+      <nav id="topo-nav" class="topo-nav oculto" aria-label="Principal">
+        <a href="#/" data-rota="busca">Buscar</a>
+        <a href="#/novo" data-rota="novo" data-minimo="edicao">Novo colaborador</a>
+        <a href="#/acessos" data-rota="acessos" data-minimo="responsavel">Acessos <span id="selo-pedidos" class="selo oculto"></span></a>
+      </nav>
+      <div id="topo-usuario" class="topo-usuario oculto">
+        <span id="topo-email" class="topo-email"></span>
+        <button id="topo-sair" class="topo-sair" type="button">Sair</button>
+      </div>
     </div>
   </header>
 
-  <div id="aviso-pedidos" class="aviso-pedidos oculto" role="status">
-    <span id="aviso-pedidos-texto"></span>
-    <a class="botao" href="#/acessos">Ver pedidos</a>
+  <div id="aviso-pedidos" class="aviso-pedidos-fundo oculto" role="status">
+    <div class="aviso-pedidos">
+      <span id="aviso-pedidos-texto"></span>
+      <a class="botao" href="#/acessos">Ver pedidos</a>
+    </div>
   </div>
 
   <main id="app" class="conteudo"></main>

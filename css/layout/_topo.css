@@ -1,29 +1,74 @@
-.topo {
-  display: flex;
+/* Topo verde, compacto. No celular: marca e usuário numa linha, menu embaixo.
+   No computador: tudo numa linha só, alinhado com a largura do conteúdo. */
+.topo { background: var(--topo-fundo); }
+
+.topo-interno {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    "marca usuario"
+    "menu menu";
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px 12px;
-  background: var(--topo-fundo);
-  padding: 10px var(--gutter);
+  gap: 6px 12px;
+  max-width: var(--largura-max);
+  margin: 0 auto;
+  padding: 8px var(--gutter);
 }
 
 .topo-marca {
+  grid-area: marca;
   color: var(--topo-texto);
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 700;
   text-decoration: none;
 }
 
-.topo-nav {
+.topo-usuario {
+  grid-area: usuario;
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+  color: var(--topo-link);
+  font-size: 0.8rem;
 }
 
+.topo-email {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topo-sair {
+  min-height: 36px;
+  padding: 0 12px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  color: var(--topo-texto);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.topo-sair:hover { background: var(--topo-ativo); }
+
+.topo-nav {
+  grid-area: menu;
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.topo-nav::-webkit-scrollbar { display: none; }
+
 .topo-nav a {
+  flex: none;
   padding: 8px 12px;
-  border-radius: var(--raio);
+  border-radius: 8px;
   color: var(--topo-link);
   font-weight: 600;
   text-decoration: none;
@@ -35,36 +80,6 @@
   background: var(--topo-ativo);
   color: var(--topo-texto);
 }
-
-/* Quem está logado e o botão de sair */
-.topo-usuario {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  color: var(--topo-link);
-  font-size: 0.85rem;
-}
-
-.topo-email {
-  flex: 1;
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-
-.topo-sair {
-  min-height: 44px;
-  padding: 0 14px;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  border-radius: var(--raio);
-  color: var(--topo-texto);
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.topo-sair:hover { background: var(--topo-ativo); }
 
 /* Número de pedidos esperando, ao lado de "Acessos" */
 .selo {
@@ -81,9 +96,16 @@
   text-align: center;
 }
 
-@media (min-width: 768px) {
-  .topo-usuario { width: auto; }
-}
-
 /* Foco visível sobre o fundo escuro do topo */
 .topo :focus-visible { outline-color: var(--topo-texto); }
+
+@media (min-width: 1024px) {
+
+  .topo-interno {
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: "marca menu usuario";
+    gap: 8px 24px;
+  }
+
+  .topo-email { max-width: 280px; font-size: 0.85rem; }
+}
