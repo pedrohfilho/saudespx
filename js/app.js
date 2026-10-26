@@ -47,6 +47,7 @@ window.SPX = window.SPX || {};
     }
 
     marcarMenu(rota.nome);
+    desenharAvisoDePedidos();
     raiz.innerHTML = '';
     rota.abrir(raiz, ...params);
     window.scrollTo(0, 0);
@@ -56,22 +57,53 @@ window.SPX = window.SPX || {};
   function mostrarTopo(sim) {
     porId('topo-nav').classList.toggle('oculto', !sim);
     porId('topo-usuario').classList.toggle('oculto', !sim);
-    if (!sim) return;
+    if (!sim) {
+      pedidosEsperando = 0;
+      desenharAvisoDePedidos();
+      return;
+    }
     porId('topo-email').textContent = SPX.sessao.email;
     document.querySelectorAll('[data-minimo]').forEach(function (link) {
       link.classList.toggle('oculto', !SPX.pode(link.dataset.minimo));
     });
-    atualizarSelo();
+    atualizarPedidos();
+    vigiarPedidos();
   }
 
-  // Número de pedidos esperando, no menu "Acessos" (só para responsáveis).
-  function atualizarSelo() {
+  // Pedidos de acesso esperando: só os responsáveis veem. Aparece no menu (número) e numa faixa
+  // chamativa no topo, que some quando não há pedido ou quando a pessoa já está na tela de acessos.
+  let pedidosEsperando = 0;
+
+  function desenharAvisoDePedidos() {
     const selo = porId('selo-pedidos');
-    if (!SPX.pode('responsavel')) { selo.classList.add('oculto'); return Promise.resolve(); }
+    const faixa = porId('aviso-pedidos');
+    const vale = SPX.pode('responsavel') && pedidosEsperando > 0;
+    selo.textContent = pedidosEsperando;
+    selo.classList.toggle('oculto', !vale);
+    const naTelaDeAcessos = rotaAtual().rota.nome === 'acessos';
+    faixa.classList.toggle('oculto', !vale || naTelaDeAcessos);
+    if (vale) {
+      porId('aviso-pedidos-texto').textContent = pedidosEsperando === 1
+        ? '1 pessoa pediu acesso e está esperando.'
+        : pedidosEsperando + ' pessoas pediram acesso e estão esperando.';
+    }
+  }
+
+  function atualizarPedidos() {
+    if (!SPX.pode('responsavel')) { pedidosEsperando = 0; desenharAvisoDePedidos(); return Promise.resolve(); }
     return SPX.acesso.listarPedidos().then(function (pedidos) {
-      selo.textContent = pedidos.length;
-      selo.classList.toggle('oculto', pedidos.length === 0);
-    }).catch(function () { selo.classList.add('oculto'); });
+      pedidosEsperando = pedidos.length;
+      desenharAvisoDePedidos();
+    }).catch(function () { /* se falhar, mantém o que já estava na tela */ });
+  }
+
+  // Enquanto o app está aberto, olha de novo a cada minuto e quando a pessoa volta para a aba.
+  let vigiando = false;
+  function vigiarPedidos() {
+    if (vigiando) return;
+    vigiando = true;
+    setInterval(function () { if (!document.hidden) atualizarPedidos(); }, 60000);
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) atualizarPedidos(); });
   }
 
   function lerErroDoRetorno() {
@@ -124,7 +156,7 @@ window.SPX = window.SPX || {};
 
   function iniciar() {
     Credito.montar({ nome: 'Pedro Henrique', url: 'https://www.linkedin.com/in/pedro-henrique-211b70346' });
-    SPX.app = { atualizarSelo };
+    SPX.app = { atualizarPedidos };
     porId('topo-sair').addEventListener('click', function () { SPX.acesso.sair(); });
     window.addEventListener('hashchange', abrirTela);
     if (SPX.db) SPX.acesso.aoSair(entrar);

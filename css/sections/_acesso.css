@@ -68,6 +68,16 @@
   font-weight: 600;
 }
 
+.selo-fixo {
+  display: inline-block;
+  padding: 0 8px;
+  background: var(--pendencia-fundo);
+  border-radius: 999px;
+  color: var(--pendencia-texto);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
 #acessos-novo .botao { margin-top: 12px; }
 
 @media (min-width: 768px) {

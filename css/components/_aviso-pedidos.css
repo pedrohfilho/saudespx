@@ -1,0 +1,20 @@
+/* Faixa que avisa os responsáveis de que há pedidos de acesso esperando. */
+.aviso-pedidos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 16px;
+  padding: 10px var(--gutter);
+  background: var(--pendencia-fundo);
+  border-bottom: 2px solid var(--pendencia-borda);
+  color: var(--pendencia-texto);
+  font-weight: 600;
+  text-align: center;
+}
+
+.aviso-pedidos .botao {
+  min-height: 44px;
+  background: var(--pendencia-borda);
+  border-color: var(--pendencia-borda);
+}

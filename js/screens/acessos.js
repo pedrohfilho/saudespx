@@ -23,15 +23,20 @@ SPX.screens.acessos = (function () {
     '</li>';
   }
 
+  // Conta fixa (protegida): não tem botão de remover e o nível só pode subir, nunca descer.
   function itemAcesso(a, eu) {
+    const niveisPermitidos = a.protegido ? NIVEIS.filter(function (n) { return N.pode(n.valor, a.nivel); }) : NIVEIS;
     return '<li class="acesso-item" data-email="' + esc(a.email) + '">' +
       '<div class="acesso-quem">' +
-        '<span class="acesso-nome">' + esc(a.nome || a.email) + (a.email === eu ? ' <span class="selo-voce">você</span>' : '') + '</span>' +
+        '<span class="acesso-nome">' + esc(a.nome || a.email) +
+          (a.email === eu ? ' <span class="selo-voce">você</span>' : '') +
+          (a.protegido ? ' <span class="selo-fixo" title="Conta fixa: não pode ser removida nem ter o nível reduzido">fixa</span>' : '') +
+        '</span>' +
         (a.nome ? '<span class="acesso-email">' + esc(a.email) + '</span>' : '') +
       '</div>' +
       '<div class="acesso-acoes">' +
-        '<select class="campo" data-trocar aria-label="Nível de ' + esc(a.email) + '">' + opcoes(NIVEIS, a.nivel) + '</select>' +
-        '<button class="botao botao-secundario" type="button" data-remover>Remover</button>' +
+        '<select class="campo" data-trocar aria-label="Nível de ' + esc(a.email) + '">' + opcoes(niveisPermitidos, a.nivel) + '</select>' +
+        (a.protegido ? '' : '<button class="botao botao-secundario" type="button" data-remover>Remover</button>') +
       '</div>' +
     '</li>';
   }
@@ -71,7 +76,7 @@ SPX.screens.acessos = (function () {
       return Promise.all([SPX.acesso.listarPedidos(), SPX.acesso.listarAcessos()]).then(function (r) {
         listaPedidos.innerHTML = r[0].length ? r[0].map(itemPedido).join('') : '<li class="dica">Nenhum pedido esperando.</li>';
         listaAcessos.innerHTML = r[1].map(function (a) { return itemAcesso(a, eu); }).join('');
-        SPX.app.atualizarSelo();
+        SPX.app.atualizarPedidos();
       }).catch(erro);
     }
 

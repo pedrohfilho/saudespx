@@ -81,6 +81,10 @@ Quem entra com a conta Google mas não tem acesso não vê nenhum dado, só cons
 | Edição | O de leitura, mais cadastrar e editar colaboradores |
 | Responsável | O de edição, mais gerenciar quem tem acesso |
 
+**Pedidos à vista:** quando alguém pede acesso, os responsáveis veem uma faixa no topo ("1 pessoa pediu acesso e está esperando") com o botão **Ver pedidos**, além do número no menu. O app confere de novo a cada minuto e quando a pessoa volta para a aba.
+
+**Contas fixas:** algumas contas podem ser marcadas como fixas (`supabase/03_acesso_fixo.sql`). Ninguém consegue removê-las nem reduzir o nível delas pela tela, nem elas mesmas; só podem subir de nível. Os e-mails das contas fixas são marcados direto no painel do banco e não ficam neste repositório.
+
 A regra vale no servidor: as tabelas ficam fechadas e todo acesso passa por funções do banco que conferem o nível. Os e-mails dos primeiros responsáveis são inseridos direto no painel do banco e não ficam neste repositório.
 
 ## Login com Google (para lembrar)
