@@ -44,6 +44,11 @@ SPX.dataSupabase = (function () {
       return SPX.rpc('atualizar_colaborador', { p_id: idColaborador, p_dados: r.dados });
     },
 
+    // Só o responsável pode. Apaga o colaborador e tudo dele; não tem volta.
+    excluirColaborador: function (idColaborador) {
+      return SPX.rpc('excluir_colaborador', { p_id: idColaborador });
+    },
+
     registrarAtendimento: function (entrada) {
       const r = SPX.regras.validarAtendimento(entrada);
       if (r.erro) return recusar(r.erro);

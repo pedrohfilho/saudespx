@@ -6,12 +6,14 @@ Substitui uma planilha de emergência por uma tela de busca rápida, pensada par
 
 ## Funcionalidades
 
-- Busca de colaborador por nome (sem diferenciar acento ou maiúscula) ou por CPF completo.
+- Busca de colaborador por nome (sem diferenciar acento ou maiúscula) ou por CPF completo. Se não houver nome igual, mostra nomes **parecidos** (letra trocada ou faltando, como "Marya" para "Maria").
 - CPF opcional, validado pelos dígitos verificadores, sem repetição entre colaboradores e escondido na ficha até alguém pedir para mostrar (com botão de copiar).
 - Filtros por turno, líder, tipo sanguíneo, alergia a remédio e comorbidade, sozinhos ou junto com o nome.
 - Ficha com tipo sanguíneo, alergia a remédio, comorbidades, turno, líder e contatos de emergência (cada um com Ligar, WhatsApp e Copiar o número).
 - Registro de atendimento: quem acompanhou, observação e data/hora, com histórico por colaborador.
-- Cadastro e edição de colaboradores, líderes e contatos.
+- Cadastro e edição de colaboradores, líderes e contatos. O telefone aceita só números (DDD + número) e é guardado no padrão `(71) 98888-7777`.
+- Os responsáveis podem apagar um colaborador (com tudo dele, sem volta) e remover contas de acesso. O banco guarda só o registro de quem apagou, sem os dados.
+- Atalhos de emergência: ligar para SAMU (192), Bombeiros (193) e Polícia (190) e abrir o mapa já procurando hospital ou UPA perto de quem está usando. Nenhum dado de pessoa é enviado.
 - Registro de cada abertura de ficha (quem consultou e quando).
 
 ## Estado atual
@@ -79,7 +81,7 @@ Quem entra com a conta Google mas não tem acesso não vê nenhum dado, só cons
 |---|---|
 | Leitura | Buscar, ver a ficha e registrar atendimento |
 | Edição | O de leitura, mais cadastrar e editar colaboradores |
-| Responsável | O de edição, mais gerenciar quem tem acesso |
+| Responsável | O de edição, mais apagar colaboradores e gerenciar quem tem acesso |
 
 **Pedidos à vista:** quando alguém pede acesso, os responsáveis veem uma faixa no topo ("1 pessoa pediu acesso e está esperando") com o botão **Ver pedidos**, além do número no menu. O app confere de novo a cada minuto e quando a pessoa volta para a aba.
 
@@ -127,6 +129,7 @@ node tests/util.test.js
 node tests/niveis.test.js
 node tests/cpf.test.js
 node tests/supabase.test.js
+node tests/telefone.test.js
 ```
 
 Os testes usam uma fixture de 5 pessoas inventadas (`tests/fixtura-minima.js`); os CPFs dos testes são números que só passam na conta do dígito verificador, não são de pessoas. O app começa vazio.

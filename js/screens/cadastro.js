@@ -21,7 +21,7 @@ SPX.screens.cadastro = (function () {
     const c = contato || { nome: '', telefone: '' };
     return '<div class="contato-linha">' +
       '<input class="campo" name="contato_nome" placeholder="Nome do contato" autocomplete="off" value="' + esc(c.nome) + '" aria-label="Nome do contato">' +
-      '<input class="campo" name="contato_telefone" type="tel" inputmode="tel" placeholder="Telefone" autocomplete="off" value="' + esc(c.telefone) + '" aria-label="Telefone do contato">' +
+      '<input class="campo" name="contato_telefone" type="tel" inputmode="numeric" maxlength="15" placeholder="(00) 00000-0000" autocomplete="off" value="' + esc(SPX.telefone.formatar(c.telefone)) + '" aria-label="Telefone do contato">' +
       '<button class="botao botao-secundario" type="button" data-remover>Remover</button>' +
     '</div>';
   }
@@ -122,6 +122,11 @@ SPX.screens.cadastro = (function () {
     raiz.querySelector('#cad-add-contato').addEventListener('click', function () {
       listaContatos.insertAdjacentHTML('beforeend', linhaContato());
       listaContatos.lastElementChild.querySelector('input').focus();
+    });
+
+    // Telefone só aceita números: o que não for número some, e o padrão (71) 98888-7777 vai se montando.
+    listaContatos.addEventListener('input', function (evento) {
+      if (evento.target.name === 'contato_telefone') evento.target.value = SPX.telefone.formatar(evento.target.value);
     });
 
     listaContatos.addEventListener('click', function (evento) {

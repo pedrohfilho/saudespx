@@ -5,7 +5,7 @@ const path = require('path');
 const assert = require('assert');
 
 global.window = global;
-['core/cpf', 'core/colaborador', 'data/rpc', 'data/supabase'].forEach((n) => {
+['core/cpf', 'core/telefone', 'core/colaborador', 'data/rpc', 'data/supabase'].forEach((n) => {
   eval(fs.readFileSync(path.join(__dirname, '../js/' + n + '.js'), 'utf8'));
 });
 
@@ -49,6 +49,11 @@ async function nega(p, trecho) {
       nome: 'Ana Souza', turno: null, tipo_sanguineo: 'O+', cpf: '52998224725', alergia_remedio: true, alergia_qual: 'Dipirona',
       comorbidades: '', id_lider: 2, contatos: [{ nome: 'Marcos', telefone: '(71) 98888-7777' }]
     });
+  });
+
+  await teste('excluir chama a função certa do banco', async () => {
+    await D.excluirColaborador(5);
+    assert.deepStrictEqual(chamadas, [{ nome: 'excluir_colaborador', args: { p_id: 5 } }]);
   });
 
   await teste('dado inválido nem chega ao banco', async () => {

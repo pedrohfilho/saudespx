@@ -8,12 +8,33 @@
 .ficha-topo { margin-top: 4px; }
 .ficha-topo .dica { margin-top: 2px; }
 
+.ficha-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 20px;
+}
+
 .ficha-editar {
   display: inline-block;
   margin-top: 6px;
   padding: 6px 0;
   font-weight: 600;
 }
+
+.ficha-excluir {
+  margin-top: 6px;
+  padding: 6px 0;
+  background: none;
+  border: 0;
+  color: var(--erro);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.ficha-excluir:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .resumo {
   display: grid;

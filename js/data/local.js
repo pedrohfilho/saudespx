@@ -183,6 +183,20 @@ window.SPX = window.SPX || {};
       return Promise.resolve(clonar(db.colaboradores[indice]));
     },
 
+    // Apaga o colaborador e tudo dele (contatos, atendimentos e consultas).
+    excluirColaborador(idColaborador) {
+      const db = carregar();
+      if (!db.colaboradores.some(c => c.id_colaborador === idColaborador)) {
+        return Promise.reject(new Error('Colaborador não encontrado.'));
+      }
+      db.colaboradores = db.colaboradores.filter(c => c.id_colaborador !== idColaborador);
+      db.contatos = db.contatos.filter(c => c.id_colaborador !== idColaborador);
+      db.atendimentos = db.atendimentos.filter(a => a.id_colaborador !== idColaborador);
+      db.consultas = db.consultas.filter(c => c.id_colaborador !== idColaborador);
+      salvar(db);
+      return Promise.resolve();
+    },
+
     registrarAtendimento(entrada) {
       const r = SPX.regras.validarAtendimento(entrada);
       if (r.erro) return Promise.reject(new Error(r.erro));

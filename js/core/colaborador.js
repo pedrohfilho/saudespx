@@ -11,10 +11,6 @@ SPX.regras = (function () {
     return String(valor == null ? '' : valor).trim();
   }
 
-  function soDigitos(valor) {
-    return texto(valor).replace(/\D/g, '');
-  }
-
   // Devolve { dados } já limpo, ou { erro } com a mensagem para mostrar na tela.
   function validarColaborador(entrada) {
     const nome = texto(entrada.nome).replace(/\s+/g, ' ');
@@ -40,8 +36,10 @@ SPX.regras = (function () {
       const telefone = texto(contato.telefone);
       if (!nomeContato && !telefone) continue; // linha em branco: ignora
       if (!nomeContato || !telefone) return { erro: 'Cada contato precisa de nome e telefone.' };
-      if (soDigitos(telefone).length < 8) return { erro: 'Telefone do contato inválido: ' + telefone };
-      contatos.push({ nome: nomeContato, telefone });
+      if (!SPX.telefone.valido(telefone)) {
+        return { erro: 'Telefone do contato inválido: ' + telefone + '. Use o DDD e o número, só com números.' };
+      }
+      contatos.push({ nome: nomeContato, telefone: SPX.telefone.formatar(telefone) });
     }
 
     return {

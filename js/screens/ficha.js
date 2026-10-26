@@ -78,9 +78,15 @@ SPX.screens.ficha = (function () {
         '<header class="ficha-topo">' +
           '<h2>' + esc(colaborador.nome) + '</h2>' +
           '<p class="dica">' + esc(turno) + ' · ' + esc(nomeLider) + '</p>' +
-          (SPX.pode('edicao')
-            ? '<a class="ficha-editar" href="#/editar/' + colaborador.id_colaborador + '">Editar dados</a>'
-            : '') +
+          '<div class="ficha-acoes">' +
+            (SPX.pode('edicao')
+              ? '<a class="ficha-editar" href="#/editar/' + colaborador.id_colaborador + '">Editar dados</a>'
+              : '') +
+            (SPX.pode('responsavel')
+              ? '<button class="ficha-excluir" type="button" data-excluir>Excluir colaborador</button>'
+              : '') +
+          '</div>' +
+          '<div id="ficha-retorno" aria-live="polite"></div>' +
         '</header>' +
         '<div class="resumo">' +
           '<div class="resumo-item">' +
@@ -95,16 +101,18 @@ SPX.screens.ficha = (function () {
         '</section>' +
         blocoCpf(colaborador) +
         blocoContatos(contatos) +
+        SPX.ui.atalhosEmergencia() +
         '<div id="ficha-atendimento"></div>' +
       '</article>';
 
-    ligarBotoes(raiz, colaborador.cpf ? SPX.cpf.formatar(colaborador.cpf) : '');
+    ligarBotoes(raiz, colaborador, colaborador.cpf ? SPX.cpf.formatar(colaborador.cpf) : '');
     SPX.screens.atendimento(raiz.querySelector('#ficha-atendimento'), colaborador.id_colaborador);
   }
 
-  // Botões da ficha: "Copiar" (avisa no próprio botão por um instante) e "Mostrar/Ocultar" do CPF.
+  // Botões da ficha: "Copiar" (avisa no próprio botão por um instante), "Mostrar/Ocultar" do CPF
+  // e "Excluir colaborador" (só para responsável, com confirmação).
   // cpfCompleto (já formatado) fica só aqui, na memória, e não no HTML da página.
-  function ligarBotoes(raiz, cpfCompleto) {
+  function ligarBotoes(raiz, colaborador, cpfCompleto) {
     const ficha = raiz.querySelector('.ficha');
     const mascara = cpfCompleto ? SPX.cpf.mascarar(cpfCompleto) : '';
 
@@ -117,6 +125,19 @@ SPX.screens.ficha = (function () {
     }
 
     ficha.addEventListener('click', function (evento) {
+      const excluir = evento.target.closest('[data-excluir]');
+      if (excluir) {
+        if (!confirm('Apagar ' + colaborador.nome + ' e todo o histórico dele? Isso não tem volta.')) return;
+        excluir.disabled = true;
+        SPX.data.excluirColaborador(colaborador.id_colaborador)
+          .then(function () { location.hash = '#/'; })
+          .catch(function (erro) {
+            excluir.disabled = false;
+            ficha.querySelector('#ficha-retorno').innerHTML = SPX.ui.mensagemErro(erro.message);
+          });
+        return;
+      }
+
       const alternar = evento.target.closest('[data-cpf-alternar]');
       if (alternar) {
         const valor = ficha.querySelector('#cpf-valor');

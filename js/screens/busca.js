@@ -64,6 +64,7 @@ SPX.screens.busca = (function () {
         '</form>' +
         '<p id="busca-dica" class="dica" aria-live="polite"></p>' +
         '<ul id="busca-lista" class="lista-resultados"></ul>' +
+        SPX.ui.atalhosEmergencia() +
       '</section>';
 
     const form = raiz.querySelector('#busca-form');
@@ -94,8 +95,12 @@ SPX.screens.busca = (function () {
     function mostrar(achados, termo, filtros) {
       const total = achados.length;
       lista.innerHTML = achados.slice(0, LIMITE_LISTA).map(itemResultado).join('');
+      // O banco marca como "parecido" o nome achado por semelhança (letra trocada ou faltando).
+      const soParecidos = total > 0 && achados.every(a => a.parecido);
       if (!total) dica.textContent = textoNenhum(termo, filtros);
-      else if (total > LIMITE_LISTA) {
+      else if (soParecidos) {
+        dica.textContent = 'Nenhum nome igual a “' + termo + '”. Mostrando ' + (total === 1 ? '1 nome parecido' : total + ' nomes parecidos') + '.';
+      } else if (total > LIMITE_LISTA) {
         dica.textContent = 'Mostrando ' + LIMITE_LISTA + ' de ' + total + '. Digite mais letras ou use os filtros para refinar.';
       } else dica.textContent = total === 1 ? '1 resultado' : total + ' resultados';
     }

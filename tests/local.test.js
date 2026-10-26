@@ -11,6 +11,7 @@ global.localStorage = {
   removeItem: (k) => { delete mem[k]; }
 };
 eval(fs.readFileSync(path.join(__dirname, '../js/core/cpf.js'), 'utf8'));
+eval(fs.readFileSync(path.join(__dirname, '../js/core/telefone.js'), 'utf8'));
 eval(fs.readFileSync(path.join(__dirname, '../js/core/colaborador.js'), 'utf8'));
 eval(fs.readFileSync(path.join(__dirname, 'fixtura-minima.js'), 'utf8'));
 eval(fs.readFileSync(path.join(__dirname, '../js/data/local.js'), 'utf8'));
@@ -181,6 +182,28 @@ async function nega(p, trecho) {
     assert.strictEqual(f.lider.nome, 'Roberto Lima');
     assert.strictEqual(f.contatos.length, 1);
     assert.strictEqual((await D.buscar('rita')).length, 1);
+  });
+
+  await teste('telefone do contato: só números (10 ou 11) e é guardado no padrão', async () => {
+    await nega(D.cadastrarColaborador({ nome: 'Tel Curto', contatos: [{ nome: 'Mãe', telefone: '3333-4444' }] }), 'Telefone do contato inválido');
+    await nega(D.cadastrarColaborador({ nome: 'Tel Longo', contatos: [{ nome: 'Mãe', telefone: '719888877770' }] }), 'Telefone do contato inválido');
+    const c = await D.cadastrarColaborador({ nome: 'Tel Bom', contatos: [{ nome: 'Mãe', telefone: '71988887777' }, { nome: 'Pai', telefone: '71 3333.4444' }] });
+    const f = await D.obterFicha(c.id_colaborador);
+    assert.deepStrictEqual(f.contatos.map(x => x.telefone), ['(71) 98888-7777', '(71) 3333-4444']);
+  });
+
+  await teste('excluir apaga o colaborador e tudo dele; o CPF pode ser usado de novo', async () => {
+    const c = await D.cadastrarColaborador({ nome: 'Para Apagar', cpf: '123.456.789-09', contatos: [{ nome: 'Mãe', telefone: '71988887777' }] });
+    await D.registrarAtendimento({ id_colaborador: c.id_colaborador, levado_por: 'Bia' });
+    await D.obterFicha(c.id_colaborador);
+    await D.excluirColaborador(c.id_colaborador);
+    await nega(D.obterFicha(c.id_colaborador), 'não encontrado');
+    await nega(D.excluirColaborador(c.id_colaborador), 'não encontrado');
+    assert.deepStrictEqual(await D.listarAtendimentos(c.id_colaborador), []);
+    const db = JSON.parse(mem.spx_local_v3);
+    assert.ok(!db.contatos.some(x => x.id_colaborador === c.id_colaborador));
+    assert.ok(!db.consultas.some(x => x.id_colaborador === c.id_colaborador));
+    await D.cadastrarColaborador({ nome: 'Voltou', cpf: '123.456.789-09' });
   });
 
   await teste('sem alergia, o "qual" é apagado', async () => {
