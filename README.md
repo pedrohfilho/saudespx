@@ -83,6 +83,8 @@ Quem entra com a conta Google mas não tem acesso não vê nenhum dado, só cons
 
 **Pedidos à vista:** quando alguém pede acesso, os responsáveis veem uma faixa no topo ("1 pessoa pediu acesso e está esperando") com o botão **Ver pedidos**, além do número no menu. O app confere de novo a cada minuto e quando a pessoa volta para a aba.
 
+**Quem pode pedir acesso:** qualquer conta Google entra no sistema, mas só consegue **pedir** acesso quem tem e-mail de um domínio liberado (`supabase/04_dominios.sql`). Quem tem e-mail de outro domínio (um Gmail, por exemplo) entra apenas se um responsável adicionar a pessoa na tela de Acessos. Com a lista de domínios vazia ninguém consegue pedir. O domínio da empresa é cadastrado direto no painel do banco e não fica neste repositório.
+
 **Contas fixas:** algumas contas podem ser marcadas como fixas (`supabase/03_acesso_fixo.sql`). Ninguém consegue removê-las nem reduzir o nível delas pela tela, nem elas mesmas; só podem subir de nível. Os e-mails das contas fixas são marcados direto no painel do banco e não ficam neste repositório.
 
 A regra vale no servidor: as tabelas ficam fechadas e todo acesso passa por funções do banco que conferem o nível. Os e-mails dos primeiros responsáveis são inseridos direto no painel do banco e não ficam neste repositório.

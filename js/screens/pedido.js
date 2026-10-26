@@ -9,11 +9,17 @@ SPX.screens.pedido = (function () {
   function abrir(raiz, estado, aoMudar) {
     const pendente = estado.pedido === 'pendente';
     const negado = estado.pedido === 'negado';
+    // O banco diz se o e-mail é de um domínio liberado para pedir (supabase/04_dominios.sql).
+    const naoPodePedir = estado.pode_pedir === false && !pendente;
 
     let corpo;
     if (pendente) {
       corpo =
         '<p>Seu pedido já foi enviado. Assim que um responsável aprovar, o sistema libera.</p>' +
+        '<button id="pedido-atualizar" class="botao botao-largo" type="button">Verificar de novo</button>';
+    } else if (naoPodePedir) {
+      corpo =
+        '<p>Este e-mail não está liberado para pedir acesso. Peça a um responsável para adicionar você na tela de Acessos e depois toque em "Verificar de novo".</p>' +
         '<button id="pedido-atualizar" class="botao botao-largo" type="button">Verificar de novo</button>';
     } else {
       corpo =
