@@ -18,7 +18,7 @@ Substitui uma planilha de emergência por uma tela de busca rápida, pensada par
 | Fase | Conteúdo | Situação |
 |---|---|---|
 | 1 | Aplicação local, com os dados guardados no navegador | pronta |
-| 2 | Login por código enviado ao e-mail, com lista de pessoas autorizadas | a fazer |
+| 2 | Login com Google e controle de acesso por nível (leitura, edição, responsável), com pedido e aprovação | em andamento (SQL pronto em `supabase/01_acesso.sql`) |
 | 3 | Banco de dados no Supabase, com criptografia dos dados sensíveis | a fazer |
 | 4 | PIN opcional, troca de usuário em aparelho compartilhado, publicação | a fazer |
 
@@ -40,6 +40,7 @@ saudespx/
 ├── index.html
 ├── componentes/        peças independentes, reutilizáveis em outros sistemas (ver o LEIA-ME de cada uma)
 │   └── credito/        selo animado "Desenvolvido por ..."
+├── supabase/           scripts SQL do banco (rodar no SQL Editor, na ordem dos números)
 ├── css/
 │   ├── main.css        importa todos os módulos (a ordem importa)
 │   ├── base/           variáveis, reset, tipografia, utilitários
@@ -65,6 +66,18 @@ npx serve .
 ```
 
 e abra o endereço que ele mostrar. Também funciona abrindo o `index.html` direto no navegador.
+
+## Controle de acesso
+
+Quem entra com a conta Google mas não tem acesso não vê nenhum dado, só consegue pedir acesso. Os responsáveis aprovam o pedido escolhendo o nível e podem alterar ou remover depois, como no compartilhamento de um documento.
+
+| Nível | O que pode |
+|---|---|
+| Leitura | Buscar, ver a ficha e registrar atendimento |
+| Edição | O de leitura, mais cadastrar e editar colaboradores |
+| Responsável | O de edição, mais gerenciar quem tem acesso |
+
+A regra vale no servidor: as tabelas ficam fechadas e todo acesso passa por funções do banco que conferem o nível. Os e-mails dos primeiros responsáveis são inseridos direto no painel do banco e não ficam neste repositório.
 
 ## Testes
 
