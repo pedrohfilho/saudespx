@@ -94,3 +94,19 @@
 
   .acesso-acoes .campo { width: 150px; }
 }
+
+/* Pessoa sem nome (cadastro antigo): campo para informar o nome */
+.acesso-aviso {
+  margin-top: 4px;
+  color: var(--pendencia-texto);
+  font-size: 0.85rem;
+}
+
+.acesso-nome-falta {
+  display: grid;
+  gap: 6px;
+  padding: 10px;
+  background: var(--pendencia-fundo);
+  border: 1px solid var(--pendencia-borda);
+  border-radius: var(--raio);
+}

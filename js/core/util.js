@@ -64,6 +64,12 @@ SPX.util = (function () {
       .trim();
   }
 
+  // Nome de pessoa: pelo menos 2 caracteres e sem "@" (para ninguém colocar o e-mail no lugar do nome).
+  function nomeValido(texto) {
+    const nome = String(texto == null ? '' : texto).replace(/\s+/g, ' ').trim();
+    return nome.length >= 2 && nome.indexOf('@') < 0;
+  }
+
   // Espera o usuário parar de digitar antes de chamar a função.
   function atrasar(funcao, milissegundos) {
     let espera = null;
@@ -73,5 +79,5 @@ SPX.util = (function () {
     };
   }
 
-  return { esc, formatarDataHora, telefoneParaLink, telefoneParaWhatsApp, copiarTexto, normalizar, atrasar };
+  return { esc, formatarDataHora, telefoneParaLink, telefoneParaWhatsApp, copiarTexto, normalizar, nomeValido, atrasar };
 })();

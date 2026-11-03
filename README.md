@@ -140,6 +140,8 @@ Os testes do **banco** (segurança por nível, criptografia, CPF, busca e filtro
 
 **CPF no banco:** `supabase/02_cpf.sql` guarda o CPF cifrado e um índice cego (HMAC com a chave do Vault) para achar a pessoa e impedir repetição sem decifrar tudo.
 
+**Nomes dos acessos:** `supabase/07_nomes.sql` torna o **nome obrigatório** ao pedir acesso, adicionar uma pessoa e aprovar um pedido, e barra o mesmo nome com outro e-mail (sem diferenciar acento ou maiúscula). Um e-mail continua valendo uma vez só. Quem ficou sem nome de antes ganha um campo na tela de Acessos para informar.
+
 **Listas:** `supabase/06_listas.sql` cria as funções das abas Colaboradores (nome, turno e líder de todos) e Emergência (nome e nível de quem cuida do sistema). Nenhuma devolve CPF, dado de saúde ou e-mail.
 
 ## Observações

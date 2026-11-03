@@ -8,19 +8,32 @@ SPX.screens.acessos = (function () {
   const N = SPX.niveis;
   const NIVEIS = N.ORDEM.map(function (n) { return { valor: n, texto: N.ROTULOS[n] }; });
 
+  // Pedido antigo, feito quando o nome era opcional: não dá para aprovar sem nome, só negar.
   function itemPedido(p) {
+    const semNome = !p.nome;
     return '<li class="acesso-item" data-pedido="' + p.id + '">' +
       '<div class="acesso-quem">' +
-        '<span class="acesso-nome">' + esc(p.nome || p.email) + '</span>' +
-        (p.nome ? '<span class="acesso-email">' + esc(p.email) + '</span>' : '') +
+        '<span class="acesso-nome">' + esc(p.nome || 'Sem nome informado') + '</span>' +
+        '<span class="acesso-email">' + esc(p.email) + '</span>' +
         '<span class="acesso-data">Pedido em ' + esc(formatarDataHora(p.criado_em)) + '</span>' +
+        (semNome ? '<span class="acesso-aviso">Este pedido veio sem nome. Negue e peça para a pessoa pedir de novo.</span>' : '') +
       '</div>' +
       '<div class="acesso-acoes">' +
-        '<select class="campo" data-nivel aria-label="Nível para ' + esc(p.email) + '">' + opcoes(NIVEIS, 'leitura') + '</select>' +
-        '<button class="botao" type="button" data-aprovar>Aprovar</button>' +
+        (semNome ? '' :
+          '<select class="campo" data-nivel aria-label="Nível para ' + esc(p.email) + '">' + opcoes(NIVEIS, 'leitura') + '</select>' +
+          '<button class="botao" type="button" data-aprovar>Aprovar</button>') +
         '<button class="botao botao-secundario" type="button" data-negar>Negar</button>' +
       '</div>' +
     '</li>';
+  }
+
+  // Quem ficou sem nome (cadastro antigo) mostra um campo para informar o nome.
+  function campoNome(a) {
+    return '<div class="acesso-nome-falta">' +
+      '<label class="campo-rotulo" for="nome-' + esc(a.email) + '">Nome (obrigatório)</label>' +
+      '<input id="nome-' + esc(a.email) + '" class="campo" data-nome autocomplete="off" maxlength="80">' +
+      '<button class="botao botao-secundario" type="button" data-salvar-nome>Salvar nome</button>' +
+    '</div>';
   }
 
   // Conta fixa (protegida): não tem botão de remover e o nível só pode subir, nunca descer.
@@ -28,12 +41,13 @@ SPX.screens.acessos = (function () {
     const niveisPermitidos = a.protegido ? NIVEIS.filter(function (n) { return N.pode(n.valor, a.nivel); }) : NIVEIS;
     return '<li class="acesso-item" data-email="' + esc(a.email) + '">' +
       '<div class="acesso-quem">' +
-        '<span class="acesso-nome">' + esc(a.nome || a.email) +
+        '<span class="acesso-nome">' + esc(a.nome || 'Sem nome') +
           (a.email === eu ? ' <span class="selo-voce">você</span>' : '') +
           (a.protegido ? ' <span class="selo-fixo" title="Conta fixa: não pode ser removida nem ter o nível reduzido">fixa</span>' : '') +
         '</span>' +
-        (a.nome ? '<span class="acesso-email">' + esc(a.email) + '</span>' : '') +
+        '<span class="acesso-email">' + esc(a.email) + '</span>' +
       '</div>' +
+      (a.nome ? '' : campoNome(a)) +
       '<div class="acesso-acoes">' +
         '<select class="campo" data-trocar aria-label="Nível de ' + esc(a.email) + '">' + opcoes(niveisPermitidos, a.nivel) + '</select>' +
         (a.protegido ? '' : '<button class="botao botao-secundario" type="button" data-remover>Remover</button>') +
@@ -54,8 +68,8 @@ SPX.screens.acessos = (function () {
           '<form id="acessos-novo" novalidate>' +
             '<div class="campo-grupo"><label class="campo-rotulo" for="novo-email">E-mail da conta Google</label>' +
               '<input id="novo-email" class="campo" type="email" name="email" autocomplete="off"></div>' +
-            '<div class="campo-grupo"><label class="campo-rotulo" for="novo-nome">Nome (opcional)</label>' +
-              '<input id="novo-nome" class="campo" name="nome" autocomplete="off"></div>' +
+            '<div class="campo-grupo"><label class="campo-rotulo" for="novo-nome">Nome completo (obrigatório)</label>' +
+              '<input id="novo-nome" class="campo" name="nome" autocomplete="off" maxlength="80" required></div>' +
             '<div class="campo-grupo"><label class="campo-rotulo" for="novo-nivel">Nível</label>' +
               '<select id="novo-nivel" class="campo" name="nivel">' + opcoes(NIVEIS, 'leitura') + '</select></div>' +
             '<button class="botao botao-largo" type="submit">Adicionar</button>' +
@@ -98,6 +112,12 @@ SPX.screens.acessos = (function () {
         SPX.acesso.negarPedido(Number(linha.dataset.pedido))
           .then(function () { avisar(SPX.ui.mensagemInfo('Pedido negado.')); return carregar(); })
           .catch(erro);
+      } else if (evento.target.closest('[data-salvar-nome]')) {
+        const nome = linha.querySelector('[data-nome]').value;
+        if (!SPX.util.nomeValido(nome)) { avisar(SPX.ui.mensagemErro('Informe o nome completo da pessoa.')); return; }
+        SPX.acesso.definirAcesso(linha.dataset.email, linha.querySelector('[data-trocar]').value, nome)
+          .then(function () { avisar(SPX.ui.mensagemInfo('Nome salvo.')); return carregar(); })
+          .catch(erro);
       } else if (evento.target.closest('[data-remover]')) {
         const email = linha.dataset.email;
         if (!confirm('Tirar o acesso de ' + email + '?')) return;
@@ -119,6 +139,7 @@ SPX.screens.acessos = (function () {
     tela.querySelector('#acessos-novo').addEventListener('submit', function (evento) {
       evento.preventDefault();
       const f = evento.target;
+      if (!SPX.util.nomeValido(f.elements.nome.value)) { avisar(SPX.ui.mensagemErro('Informe o nome completo da pessoa.')); return; }
       SPX.acesso.definirAcesso(f.elements.email.value, f.elements.nivel.value, f.elements.nome.value)
         .then(function () { f.reset(); avisar(SPX.ui.mensagemInfo('Pessoa adicionada.')); return carregar(); })
         .catch(erro);

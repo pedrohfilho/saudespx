@@ -41,6 +41,12 @@ teste('normalizar tira acento e maiúscula', () => {
   assert.strictEqual(U.normalizar(null), '');
 });
 
+teste('nome de pessoa: obrigatório, 2 letras ou mais e sem arroba', () => {
+  assert.strictEqual(U.nomeValido('Naila Souza'), true);
+  assert.strictEqual(U.nomeValido('  Li  '), true);
+  [ '', '   ', 'A', null, undefined, 'naila@exemplo.com' ].forEach(v => assert.strictEqual(U.nomeValido(v), false));
+});
+
 teste('esc protege o HTML', () => {
   assert.strictEqual(U.esc('<b onclick="x">&\''), '&lt;b onclick=&quot;x&quot;&gt;&amp;&#39;');
 });

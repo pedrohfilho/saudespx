@@ -25,8 +25,8 @@ SPX.screens.pedido = (function () {
       corpo =
         (negado ? '<p>Seu último pedido não foi aprovado. Se quiser, dá para pedir de novo.</p>' : '') +
         '<div class="campo-grupo">' +
-          '<label class="campo-rotulo" for="pedido-nome">Seu nome (ajuda os responsáveis a saber quem é)</label>' +
-          '<input id="pedido-nome" class="campo" autocomplete="name" maxlength="80">' +
+          '<label class="campo-rotulo" for="pedido-nome">Seu nome completo (obrigatório)</label>' +
+          '<input id="pedido-nome" class="campo" autocomplete="name" maxlength="80" required>' +
         '</div>' +
         '<div id="pedido-retorno" aria-live="polite"></div>' +
         '<button id="pedido-enviar" class="botao botao-largo" type="button">Pedir acesso</button>';
@@ -50,8 +50,13 @@ SPX.screens.pedido = (function () {
     const enviar = raiz.querySelector('#pedido-enviar');
     if (enviar) {
       enviar.addEventListener('click', function () {
+        const nome = raiz.querySelector('#pedido-nome').value;
+        if (!SPX.util.nomeValido(nome)) {
+          raiz.querySelector('#pedido-retorno').innerHTML = SPX.ui.mensagemErro('Informe o seu nome completo.');
+          return;
+        }
         enviar.disabled = true;
-        SPX.acesso.pedirAcesso(raiz.querySelector('#pedido-nome').value)
+        SPX.acesso.pedirAcesso(nome)
           .then(aoMudar)
           .catch(function (e) {
             raiz.querySelector('#pedido-retorno').innerHTML = SPX.ui.mensagemErro(e.message);
