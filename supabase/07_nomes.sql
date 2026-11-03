@@ -5,6 +5,7 @@
 --   * pedir acesso, adicionar uma pessoa e aprovar um pedido exigem o NOME (mínimo 2 letras, sem "@");
 --   * o e-mail já era único (um e-mail = uma linha); passa a ser barrado também o MESMO NOME com outro
 --     e-mail (sem diferenciar acento, maiúscula ou espaço sobrando);
+--   * o e-mail digitado não pode ter espaço (um e-mail com espaço foi gravado e a pessoa não conseguiria entrar);
 --   * o banco recusa gravar acesso sem nome. Linhas antigas sem nome continuam lá até alguém informar
 --     o nome pela tela de Acessos (a regra vale para o que for gravado daqui para frente).
 --
@@ -19,6 +20,24 @@ as $$
     'áàâãäéèêëíìîïóòôõöúùûüçñ',
     'aaaaaeeeeiiiiooooouuuucn')
 $$;
+
+-- E-mail: sem espaço em lugar nenhum, com texto antes e depois do "@" e um ponto no domínio.
+-- (Antes só olhava a posição do "@" e do ponto, e deixou passar "nome@empresa. com", com espaço.)
+create or replace function private.limpar_email(valor text)
+returns text
+language plpgsql immutable set search_path = ''
+as $$
+declare
+  e text := lower(btrim(coalesce(valor, '')));
+begin
+  if e !~ '^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$' then
+    raise exception 'E-mail inválido.';
+  end if;
+  return e;
+end
+$$;
+
+revoke all on function private.limpar_email(text) from public, anon, authenticated;
 
 -- Nome limpo (espaços repetidos viram um só). Recusa nome vazio, curto ou que pareça e-mail.
 create or replace function private.limpar_nome(valor text)
