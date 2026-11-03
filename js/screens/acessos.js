@@ -44,6 +44,7 @@ SPX.screens.acessos = (function () {
         '<span class="acesso-nome">' + esc(a.nome || 'Sem nome') +
           (a.email === eu ? ' <span class="selo-voce">você</span>' : '') +
           (a.protegido ? ' <span class="selo-fixo" title="Conta fixa: não pode ser removida nem ter o nível reduzido">fixa</span>' : '') +
+          (a.confirmado_em ? '' : ' <span class="selo-fixo" title="O e-mail só fica confirmado quando a pessoa entra pela primeira vez. Se não for ela, confira se o e-mail está certo.">ainda não entrou</span>') +
         '</span>' +
         '<span class="acesso-email">' + esc(a.email) + '</span>' +
       '</div>' +
@@ -66,8 +67,9 @@ SPX.screens.acessos = (function () {
         '<section class="bloco">' +
           '<h3>Adicionar uma pessoa</h3>' +
           '<form id="acessos-novo" novalidate>' +
-            '<div class="campo-grupo"><label class="campo-rotulo" for="novo-email">E-mail da conta Google</label>' +
-              '<input id="novo-email" class="campo" type="email" name="email" autocomplete="off"></div>' +
+            '<div class="campo-grupo"><label class="campo-rotulo" for="novo-email">E-mail corporativo da conta Google</label>' +
+              '<input id="novo-email" class="campo" type="email" name="email" autocomplete="off">' +
+              '<p class="dica">Só e-mail da empresa. Ele fica confirmado quando a pessoa entrar pela primeira vez; até lá aparece "ainda não entrou".</p></div>' +
             '<div class="campo-grupo"><label class="campo-rotulo" for="novo-nome">Nome completo (obrigatório)</label>' +
               '<input id="novo-nome" class="campo" name="nome" autocomplete="off" maxlength="80" required></div>' +
             '<div class="campo-grupo"><label class="campo-rotulo" for="novo-nivel">Nível</label>' +
@@ -141,7 +143,7 @@ SPX.screens.acessos = (function () {
       const f = evento.target;
       if (!SPX.util.nomeValido(f.elements.nome.value)) { avisar(SPX.ui.mensagemErro('Informe o nome completo da pessoa.')); return; }
       SPX.acesso.definirAcesso(f.elements.email.value, f.elements.nivel.value, f.elements.nome.value)
-        .then(function () { f.reset(); avisar(SPX.ui.mensagemInfo('Pessoa adicionada.')); return carregar(); })
+        .then(function () { f.reset(); avisar(SPX.ui.mensagemInfo('Pessoa adicionada. Confira se o e-mail está certo: ele só é confirmado quando ela entrar pela primeira vez.')); return carregar(); })
         .catch(erro);
     });
 

@@ -142,6 +142,8 @@ Os testes do **banco** (segurança por nível, criptografia, CPF, busca e filtro
 
 **Nomes dos acessos:** `supabase/07_nomes.sql` torna o **nome obrigatório** ao pedir acesso, adicionar uma pessoa e aprovar um pedido, e barra o mesmo nome com outro e-mail (sem diferenciar acento ou maiúscula). Um e-mail continua valendo uma vez só. Quem ficou sem nome de antes ganha um campo na tela de Acessos para informar.
 
+**E-mail confirmado:** `supabase/08_email_confirmado.sql` só deixa **adicionar à mão** e-mail de domínio liberado. O sistema não sabe se um e-mail digitado existe; quem prova é a própria pessoa entrando com o Google. Por isso cada acesso tem "confirmado_em": vazio até o primeiro login com aquele e-mail (quem veio de pedido aprovado e as contas fixas já nascem confirmados). A tela de Acessos mostra "ainda não entrou" nos não confirmados, para perceber erro de digitação.
+
 **Listas:** `supabase/06_listas.sql` cria as funções das abas Colaboradores (nome, turno e líder de todos) e Emergência (nome e nível de quem cuida do sistema). Nenhuma devolve CPF, dado de saúde ou e-mail.
 
 ## Observações
